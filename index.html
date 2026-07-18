@@ -245,13 +245,7 @@ gsap.utils.toArray('.reveal-chars').forEach(h2 => {
   });
 });
 
-window.addEventListener('load', () => {
-  ScrollTrigger.refresh();
-  if (location.hash === '#feat') {
-    const el = document.getElementById('feat');
-    if (el) { if (window.__lenis) window.__lenis.scrollTo(el, { immediate: true }); else el.scrollIntoView(); }
-  }
-});
+window.addEventListener('load', () => ScrollTrigger.refresh());
 </script>
 
 </body>
