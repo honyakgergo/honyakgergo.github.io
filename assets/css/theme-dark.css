@@ -1,0 +1,219 @@
+/* ══════════════════════════════════════════════════════════════
+   DARK EDITION — override layer, loaded AFTER site.css + hero.css.
+   Redefines the design tokens (so ~90% of the site flips for free)
+   plus the handful of hardcoded-colour spots, and adds the skill
+   spiral that replaces the flat stack grid.
+   ══════════════════════════════════════════════════════════════ */
+
+:root{
+  --paper:#0b0c0e; --paper-2:#16181c; --paper-3:#23262c;
+  --ink:#f2f2f5; --ink-2:#c7c9d1; --ink-mute:#8a8d97; --ink-faint:#5f636d;
+  --rule:rgba(255,255,255,.12); --rule-soft:rgba(255,255,255,.06);
+  --sage:#5b93ff; --ochre:#5b93ff; --rust:#5b93ff; --blue:#5b93ff;
+  --blue-soft:rgba(91,147,255,.14);
+}
+
+/* animatable per-skill focus colour for the spiral (registered so it can transition/wash) */
+@property --focus{ syntax:'<color>'; inherits:true; initial-value:#5b93ff; }
+
+::selection{ background:var(--blue); color:#0b0c0e; }
+
+/* site.css sets overflow-x:hidden on html/body, which disables position:sticky.
+   overflow-x:clip prevents horizontal scroll WITHOUT creating a scroll
+   container, so the sticky spiral stage works. Scoped to the dark pages. */
+html, body{ overflow-x:clip; }
+
+/* Lenis smooth-scroll runtime styles */
+html.lenis, html.lenis body{ height:auto; }
+.lenis.lenis-smooth{ scroll-behavior:auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent]{ overscroll-behavior:contain; }
+.lenis.lenis-stopped{ overflow:hidden; }
+
+/* glass bars → dark */
+.nav{ background:rgba(11,12,14,.72); }
+.filter-bar-wrap{ background:rgba(11,12,14,.85); }
+
+/* stack icons (if any page still uses the flat grid) → white marks */
+.stack-card .icon img{ filter:brightness(0) saturate(100%) invert(1); }
+.stack-card:hover .icon img{ filter:brightness(0) saturate(100%) invert(55%) sepia(60%) saturate(2200%) hue-rotate(199deg) brightness(103%) contrast(97%); }
+
+/* ── project cards: modern elevated dark panels (was: flat unified surface) ── */
+.work .pcard:nth-child(odd),
+.work .pcard:nth-child(even){ transform:none; }   /* drop the editorial tilt on dark */
+
+.pcard,
+.pcard.tone-sage, .pcard.tone-ochre, .pcard.tone-paper, .pcard.tone-ink{
+  background:linear-gradient(165deg,#1b1e25 0%,#141619 58%,#101217 100%);
+  color:var(--ink);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:18px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07), 0 30px 60px -34px rgba(0,0,0,.9);
+}
+/* accent hairline that draws in on hover */
+.pcard::before{
+  content:''; position:absolute; top:0; left:24px; right:24px; height:1.5px;
+  background:linear-gradient(90deg, transparent, var(--blue), transparent);
+  transform:scaleX(0); transform-origin:center;
+  transition:transform .55s cubic-bezier(.7,0,.2,1); z-index:2;
+}
+.pcard:hover{
+  transform:translateY(-6px) !important;
+  border-color:rgba(91,147,255,.45);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09), 0 42px 80px -30px rgba(0,0,0,.95), 0 22px 60px -30px rgba(91,147,255,.35);
+}
+.pcard:hover::before{ transform:scaleX(1); }
+
+/* the viz "screen": framed recessed panel with a faint blue floor-glow */
+.pcard-stage, .pcard.tone-ink .pcard-stage{
+  background:radial-gradient(120% 85% at 50% 118%, rgba(91,147,255,.18), transparent 60%), linear-gradient(180deg,#0e1116,#0a0c10);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.pcard.tone-ink .p-num, .pcard.tone-ink .p-meta, .pcard.tone-ink .p-blurb{ color:var(--ink-mute); }
+.pcard.tone-ink .p-tags span{ border-color:var(--rule); color:var(--ink-2); }
+.pcard.tone-ink h3 em{ color:var(--blue); }
+.pcard .p-arrow{ border-color:var(--rule); color:var(--ink-mute); }
+.pcard:hover .p-arrow{ background:var(--blue); border-color:var(--blue); color:#0b0c0e; transform:rotate(-45deg); }
+
+/* archive filter chip (active used #fff on --ink; --ink is light now) */
+.f-chip.active{ background:var(--blue); border-color:var(--blue); color:#0b0c0e; }
+
+/* more-projects CTA fills blue on hover → keep text white */
+.more-cta:hover{ color:#fff; }
+.more-cta:hover .mc-arrow{ color:#fff; }
+
+/* about portrait frame fallback (behind the photo) */
+.about-photo{ background:radial-gradient(ellipse at 30% 25%, rgba(91,147,255,.14), transparent 60%), linear-gradient(160deg,#1a1c20,#0e1013); }
+
+/* project-detail exhibit frames */
+.exhibit-frame{ background:var(--paper-2); }
+
+/* hero end-panel: keep the buzzword chips off; show the backtest/live table */
+.ehero-path{ display:none; }
+
+/* per-letter heading reveal (scroll-triggered stagger) */
+.reveal-chars .rch{ display:inline-block; overflow:hidden; vertical-align:top; padding-bottom:.2em; margin-bottom:-.2em; }
+.reveal-chars .rch-i{ display:inline-block; will-change:transform; }
+.reveal-chars .rword{ display:inline-block; white-space:nowrap; vertical-align:top; }
+
+/* ══ FEATURED WORK — laying coverflow, scroll-scrubbed ══ */
+.feat{ position:relative; height:340vh; background:var(--paper); }
+.feat-stage{ position:sticky; top:0; height:100vh; overflow:hidden; perspective:1700px; --focus:#6d92bd; transition:--focus .7s ease; }
+.feat-wash{ position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(ellipse 80% 60% at 50% 44%, color-mix(in srgb, var(--focus) 13%, transparent), transparent 62%); }
+
+.feat-head{ position:absolute; top:clamp(84px,12vh,120px); left:0; right:0; text-align:center; z-index:6; pointer-events:none; }
+.feat-head .label{ font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:12px; }
+.feat-head h2{ font-family:var(--serif); font-weight:300; font-size:clamp(30px,4.2vw,56px); line-height:1; letter-spacing:-.025em; margin:0; }
+.feat-head h2 em{ font-style:italic; color:var(--focus); transition:color .7s ease; }
+
+.feat-track{ position:absolute; left:50%; top:53%; transform-style:preserve-3d; z-index:4; }
+.fcard{ position:absolute; left:0; top:0; display:block; --cw:clamp(320px,34vw,560px);
+  width:var(--cw); aspect-ratio:3/2; margin-left:calc(var(--cw) / -2); margin-top:calc(var(--cw) / 3 * -1);
+  border-radius:16px; overflow:hidden; border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 40px 90px -40px rgba(0,0,0,.9); transform-style:preserve-3d; will-change:transform;
+  text-decoration:none; color:inherit; }
+.fcard .fface{ position:absolute; inset:0; }
+.fcard .f-ghost{ position:absolute; top:-.16em; right:.05em; font-family:var(--serif); font-weight:200;
+  font-size:clamp(96px,10vw,150px); line-height:1; color:color-mix(in srgb, var(--a) 40%, transparent); opacity:.5; pointer-events:none; }
+.fcard .fmeta{ position:absolute; left:24px; right:24px; bottom:22px; z-index:2; }
+.fcard .fmeta .ft{ font-family:var(--serif); font-weight:400; font-size:clamp(23px,2vw,30px); line-height:1.05; letter-spacing:-.01em; color:#fff; }
+.fcard .fmeta .ft em{ font-style:italic; font-weight:300; color:rgba(255,255,255,.72); }
+.fcard .f-keys{ display:flex; flex-wrap:wrap; gap:7px; margin-top:14px; }
+.fcard .f-keys span{ font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2);
+  border:1px solid var(--rule); border-radius:100px; padding:5px 11px; background:rgba(255,255,255,.03); }
+.fcard.focused{ border-color:rgba(255,255,255,.2); }
+
+.fcard.more .more-face{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(120% 120% at 50% 28%, color-mix(in srgb, var(--a) 32%, transparent), transparent 60%), linear-gradient(160deg,#141820,#0a0b0f);
+  border:1px dashed rgba(255,255,255,.16); border-radius:16px; }
+.fcard.more .more-inner{ text-align:center; }
+.fcard.more .more-k{ display:block; font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:14px; }
+.fcard.more .more-t{ display:block; font-family:var(--serif); font-weight:300; font-size:34px; letter-spacing:-.02em; color:var(--ink); }
+.fcard.more .more-s{ display:block; margin-top:12px; font-family:var(--mono); font-size:11px; letter-spacing:.08em; color:var(--ink-mute); }
+
+.feat-readout{ position:absolute; left:0; right:0; bottom:clamp(70px,11vh,110px); text-align:center; z-index:6; pointer-events:none; }
+.feat-readout .fr-tag{ font-family:var(--serif); font-style:italic; font-size:clamp(15px,1.6vw,20px); color:var(--ink-2); transition:opacity .3s ease; }
+.feat-readout .fr-cta{ margin-top:15px; position:relative; display:inline-flex; align-items:center; gap:9px; pointer-events:auto; text-decoration:none;
+  font-family:var(--serif); font-weight:400; font-size:clamp(15px,1.5vw,18px); letter-spacing:.005em; color:var(--ink-2);
+  padding:2px 1px 7px; transition:color .3s ease; }
+.feat-readout .fr-cta .arw{ color:var(--focus); font-style:normal; transition:transform .35s cubic-bezier(.2,.7,.2,1), color .6s ease; }
+.feat-readout .fr-cta::after{ content:''; position:absolute; left:0; right:0; bottom:0; height:1px; background:var(--focus);
+  transform:scaleX(0); transform-origin:left; transition:transform .45s cubic-bezier(.2,.7,.2,1), background .6s ease; }
+.feat-readout .fr-cta:hover{ color:#fff; }
+.feat-readout .fr-cta:hover .arw{ transform:translateX(6px); }
+.feat-readout .fr-cta:hover::after{ transform:scaleX(1); }
+
+.feat-hint{ position:absolute; left:0; right:0; bottom:30px; text-align:center; z-index:6; pointer-events:none;
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint); }
+/* ── MOBILE: native horizontal swipe carousel (replaces the scroll-scrubbed coverflow) ── */
+@media (max-width:820px){
+  .feat{ height:auto; }
+  .feat-stage{ position:relative; top:auto; height:auto; overflow:visible; perspective:none; padding:104px 0 76px; }
+  .feat-wash{ display:none; }
+  .feat-head{ position:relative; top:auto; left:auto; right:auto; margin:0 22px 22px; }
+  .feat-track{ position:relative; left:auto; top:auto; transform:none; transform-style:flat;
+    display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch; padding:8px 16px 16px; scrollbar-width:none; }
+  .feat-track::-webkit-scrollbar{ display:none; }
+  .fcard{ position:relative; left:auto; top:auto; margin:0; width:82vw; --cw:82vw;
+    flex:0 0 82vw; transform:none; opacity:1; filter:none; scroll-snap-align:center; }
+  .feat-readout{ position:relative; left:auto; right:auto; bottom:auto; margin:20px 22px 0; }
+  .feat-hint{ position:relative; left:auto; right:auto; bottom:auto; margin-top:12px; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SKILL SPIRAL  (the "working vocabulary" section)
+   Fixed stage, shown by spiral.js only while #vocab owns the viewport;
+   .vocab-after wipes up over it on exit (same trick as the hero).
+   ══════════════════════════════════════════════════════════════ */
+.vocab{ position:relative; height:300vh; background:var(--paper); }
+.vocab-after{ position:relative; z-index:2; background:var(--paper); }
+.vocab-stage{
+  position:sticky; top:0; height:100vh; overflow:hidden;
+  --focus:#5b93ff; transition:--focus .7s ease;
+  background:radial-gradient(ellipse 70% 55% at 50% 46%, color-mix(in srgb, var(--focus) 15%, transparent), transparent 62%);
+}
+.vstage{ position:absolute; inset:0; perspective:1150px; }
+.vhelix{ position:absolute; left:50%; top:50%; transform-style:preserve-3d; }
+
+.vtile{
+  position:absolute; left:-150px; top:-180px; width:300px; height:360px;
+  background:var(--paper-2); border:2px solid var(--rule); border-radius:32px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:30px;
+  box-shadow:0 44px 90px -50px rgba(0,0,0,.85); backface-visibility:hidden;
+}
+.vtile .ic{ width:120px; height:120px; display:flex; align-items:center; justify-content:center; }
+.vtile .ic img{ width:100%; height:100%; display:block; }
+.vtile .nm{ font-family:var(--mono); font-size:23px; letter-spacing:.04em; color:var(--ink-2); white-space:nowrap; }
+.vtile.focus{ border-color:var(--focus);
+  box-shadow:0 0 0 2px color-mix(in srgb, var(--focus) 55%, transparent),
+             0 40px 110px -34px color-mix(in srgb, var(--focus) 55%, transparent),
+             0 30px 80px -48px rgba(0,0,0,.9); }
+.vtile.focus .nm{ color:var(--focus); }
+
+.vocab-head{ position:absolute; top:clamp(96px,13vh,150px); left:clamp(24px,5vw,72px); max-width:min(460px,78vw); z-index:5; pointer-events:none; }
+.vocab-head .label{ font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:16px; }
+.vocab-head h2{ font-family:var(--serif); font-weight:300; font-size:clamp(34px,4.6vw,60px); line-height:1; letter-spacing:-.025em; margin:0; }
+.vocab-head h2 em{ font-style:italic; color:var(--blue); }
+.vocab-head p{ margin-top:16px; font-size:clamp(14px,1.2vw,17px); line-height:1.5; color:var(--ink-2); max-width:40ch; }
+
+.vocab-readout{ position:absolute; left:clamp(24px,5vw,72px); bottom:clamp(40px,8vh,90px); z-index:5; pointer-events:none; }
+.vocab-readout .lbl{ font-family:var(--mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:8px; }
+.vocab-readout .val{ font-family:var(--serif); font-weight:300; font-size:clamp(28px,3.6vw,52px); letter-spacing:-.02em; color:var(--focus); transition:opacity .25s ease; line-height:1; }
+
+.vocab-hint{ position:absolute; right:clamp(24px,5vw,72px); bottom:clamp(40px,8vh,90px); z-index:5; pointer-events:none; font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+
+@media (max-width:820px){ .vtile{ width:236px; height:292px; left:-118px; top:-146px; } .vocab{ height:280vh; } }
+@media (prefers-reduced-motion: reduce){ .vocab{ height:100vh; } }
+
+/* ══════════════════════════════════════════════════════════════
+   Remove decorative drop-caps and stat divider rules — the big
+   floated first-letters (the About "I" especially) and the
+   vertical column rules read as stray vertical lines.
+   ══════════════════════════════════════════════════════════════ */
+.about-text .lead span.drop{ float:none; font-size:inherit; line-height:inherit; font-style:normal; color:inherit; padding:0; }
+.d-copy p:first-of-type::first-letter{ float:none; font-size:inherit; line-height:inherit; padding:0; color:inherit; font-weight:inherit; }
+.d-stat + .d-stat{ border-left:none; }

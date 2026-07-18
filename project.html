@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Project · Gergő Honyák</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="view-transition" content="same-origin" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400;1,14..32,500;1,14..32,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="assets/css/site.css" />
+<link rel="stylesheet" href="assets/css/theme-dark.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <a href="archive.html" class="nav-back">
+    <svg viewBox="0 0 22 8" fill="none"><path d="M0 4H21M21 4L17 1M21 4L17 7" stroke="currentColor" stroke-width="1.2"/></svg>
+    Archive
+  </a>
+  <span class="brand">Gergő Honyák</span>
+  <span class="eyebrow" id="navEyebrow"></span>
+</nav>
+
+<div id="app"><!-- injected --></div>
+
+<script src="assets/js/projects-data.js"></script>
+<script>
+/* ─── Sentify architecture diagram, native SVG matching the dark tokens ── */
+function sentifyDiagram() {
+  return `
+  <svg viewBox="0 0 900 460" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:'JetBrains Mono',monospace;">
+    <style>
+      .box { fill: #16181c; stroke: rgba(255,255,255,0.30); stroke-width: 1.2; }
+      .box-accent { fill: #5b93ff; stroke: #5b93ff; }
+      .box-data { fill: #10203a; stroke: #5b93ff; stroke-width: 1; }
+      .lbl { font-size: 12px; fill: #e6e7ea; }
+      .lbl-sub { font-size: 9.5px; fill: #8a8d97; }
+      .lbl-accent { font-size: 12px; fill: #0b0c0e; }
+      .edge { stroke: rgba(255,255,255,0.28); stroke-width: 1; fill: none; }
+      .edge-txt { font-size: 8.5px; fill: #8a8d97; }
+    </style>
+
+    <!-- Docker Compose boundary -->
+    <rect x="40" y="30" width="520" height="330" rx="8" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <text x="56" y="52" class="lbl-sub">DOCKER COMPOSE — PORTAINER HOST</text>
+
+    <rect x="60" y="70" width="130" height="56" rx="6" class="box"/>
+    <text x="125" y="94" text-anchor="middle" class="lbl">frontend</text>
+    <text x="125" y="110" text-anchor="middle" class="lbl-sub">React/Vite</text>
+
+    <rect x="220" y="70" width="150" height="56" rx="6" class="box"/>
+    <text x="295" y="94" text-anchor="middle" class="lbl">backend</text>
+    <text x="295" y="110" text-anchor="middle" class="lbl-sub">FastAPI · /predict /feedback</text>
+
+    <rect x="400" y="70" width="140" height="56" rx="6" class="box"/>
+    <text x="470" y="94" text-anchor="middle" class="lbl">dashboard</text>
+    <text x="470" y="110" text-anchor="middle" class="lbl-sub">Streamlit</text>
+
+    <rect x="220" y="170" width="150" height="56" rx="6" class="box-accent"/>
+    <text x="295" y="194" text-anchor="middle" class="lbl-accent">mlflow</text>
+    <text x="295" y="210" text-anchor="middle" class="lbl-sub" fill="rgba(11,12,14,0.75)">tracking + registry</text>
+
+    <rect x="60" y="270" width="140" height="56" rx="6" class="box-data"/>
+    <text x="130" y="294" text-anchor="middle" class="lbl">postgres</text>
+    <text x="130" y="310" text-anchor="middle" class="lbl-sub">analyses / feedback</text>
+
+    <rect x="400" y="270" width="140" height="56" rx="6" class="box-data"/>
+    <text x="470" y="294" text-anchor="middle" class="lbl">minio</text>
+    <text x="470" y="310" text-anchor="middle" class="lbl-sub">mlflow artifacts</text>
+
+    <!-- Airflow, outside compose -->
+    <rect x="640" y="70" width="220" height="70" rx="6" class="box" stroke-dasharray="0"/>
+    <text x="750" y="98" text-anchor="middle" class="lbl">Airflow</text>
+    <text x="750" y="114" text-anchor="middle" class="lbl-sub">school server</text>
+    <text x="750" y="128" text-anchor="middle" class="lbl-sub">emotion_retraining_pipeline</text>
+
+    <!-- GHCR -->
+    <rect x="640" y="270" width="220" height="56" rx="6" class="box"/>
+    <text x="750" y="294" text-anchor="middle" class="lbl">GHCR images</text>
+    <text x="750" y="310" text-anchor="middle" class="lbl-sub">backend / frontend / dashboard</text>
+
+    <!-- edges -->
+    <path class="edge" d="M190,98 H220"/>
+    <path class="edge" d="M295,126 V170"/>
+    <path class="edge" d="M370,98 H400"/>
+    <path class="edge" d="M470,126 V270"/>
+    <path class="edge" d="M295,226 Q295,250 190,270"/>
+    <text x="200" y="255" class="edge-txt">loads champion</text>
+    <path class="edge" d="M295,126 Q220,150 130,270" />
+    <text x="150" y="200" class="edge-txt">writes predictions</text>
+
+    <path class="edge" d="M640,105 Q560,105 400,98" />
+    <text x="500" y="70" class="edge-txt" text-anchor="middle">check_data → prep → finetune → evaluate → register</text>
+
+    <path class="edge" d="M750,140 V270" />
+    <text x="758" y="200" class="edge-txt">registers candidate</text>
+
+    <path class="edge" d="M750,270 Q750,180 860,140" stroke-dasharray="3 3"/>
+    <text x="800" y="360" class="edge-txt">CI builds &amp; pushes; host re-pulls</text>
+    <path class="edge" d="M640,298 H540" stroke-dasharray="3 3"/>
+  </svg>`;
+}
+
+const params = new URLSearchParams(window.location.search);
+const id = params.get('id') || PROJECTS[0].id;
+const idx = PROJECTS.findIndex(p => p.id === id);
+const p = PROJECTS[idx] || PROJECTS[0];
+const realExhibits = (p.exhibits || []).filter(e => !e.placeholder);
+const prev = PROJECTS[(idx - 1 + PROJECTS.length) % PROJECTS.length];
+const next = PROJECTS[(idx + 1) % PROJECTS.length];
+
+document.title = `${p.title} ${p.em} · Gergő Honyák`;
+document.getElementById('navEyebrow').textContent = `${idx + 1 < 10 ? '0' : ''}${idx + 1} / ${PROJECTS.length}`;
+
+function exhibitMarkup(e) {
+  if (e.diagram === 'sentify-arch') {
+    return `<div class="exhibit-frame diagram">${sentifyDiagram()}</div><div class="exhibit-cap">${e.caption}</div>`;
+  }
+  if (e.placeholder) {
+    return `<div class="exhibit-frame placeholder"><span>Awaiting exhibit — image to be added</span></div><div class="exhibit-cap">${e.caption}</div>`;
+  }
+  const _src = e.src ? e.src : `assets/images/${p.id}/${e.img}`;
+  return `<div class="exhibit-frame"><img src="${_src}" alt="${e.caption}" loading="lazy" /></div><div class="exhibit-cap">${e.caption}</div>`;
+}
+
+document.getElementById('app').innerHTML = `
+  <div class="d-hero">
+    <span class="d-ghost" style="view-transition-name: ghost-${p.id};">${p.n}</span>
+    <div class="d-eyebrow"><span class="dot"></span>${CAT_LABEL[p.cat]} — ${p.year}</div>
+    <h1 class="d-title" style="view-transition-name: title-${p.id};">${p.title} <em>${p.em}</em></h1>
+    <div class="d-meta-row">
+      <span>${p.role}</span><span>${p.type}</span><span>${p.status}</span>
+    </div>
+    <div class="d-stats">
+      ${p.stats.map(s => `<div class="d-stat"><div class="num">${s.num}</div><div class="label">${s.label}</div></div>`).join('')}
+    </div>
+  </div>
+  <div class="d-body${realExhibits.length ? '' : ' d-body-solo'}">
+    ${realExhibits.length ? `<div class="d-visual">
+      <div class="d-exhibits">
+        ${realExhibits.map(e => `<div class="exhibit">${exhibitMarkup(e)}</div>`).join('')}
+      </div>
+    </div>` : ''}
+    <div>
+      <div class="d-tags-row">
+        ${p.tags.map(t => `<span class="stack-tag">${t}</span>`).join('')}
+        <span class="status-badge">${p.status}</span>
+      </div>
+      <div class="d-copy">${p.copy.map(t => `<p>${t}</p>`).join('')}</div>
+    </div>
+  </div>
+  <div class="d-nav">
+    <a href="project.html?id=${prev.id}"><small>← Previous</small>${prev.title}</a>
+    <a href="project.html?id=${next.id}" class="next"><small>Next →</small>${next.title}</a>
+  </div>
+`;
+</script>
+
+</body>
+</html>

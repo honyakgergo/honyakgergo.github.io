@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Archive · Gergő Honyák</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="view-transition" content="same-origin" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400;1,14..32,500;1,14..32,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="assets/css/site.css" />
+<link rel="stylesheet" href="assets/css/theme-dark.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+
+<style>
+  /* ══ ARCHIVE — single-screen fanned gallery ══ */
+  .arch{ min-height:calc(100vh - 62px); margin-top:62px; display:flex; align-items:center; justify-content:center;
+    perspective:1700px; padding:18px 20px 34px; }
+  .arch-inner{ display:flex; flex-direction:column; align-items:center; gap:clamp(16px,2.6vh,30px); transform-style:preserve-3d; }
+
+  /* topic filter row */
+  .arch-filters{ display:flex; flex-wrap:wrap; gap:9px; justify-content:center; max-width:820px; }
+  .fbtn{ font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-mute);
+    padding:9px 16px; border:1px solid var(--rule); border-radius:100px; background:transparent; cursor:pointer;
+    transition:color .3s ease, border-color .3s ease, background .3s ease; }
+  .fbtn:hover{ color:var(--ink-2); border-color:rgba(255,255,255,.24); }
+  .fbtn.active{ color:var(--ink); border-color:rgba(255,255,255,.34); background:rgba(255,255,255,.05); }
+
+  .arch-rows{ display:flex; flex-direction:column; gap:clamp(16px,2.2vh,30px); transform-style:preserve-3d; }
+  .arch-row{ display:flex; gap:clamp(18px,1.8vw,34px); justify-content:center; transform-style:preserve-3d; }
+
+  .gcard{ position:relative; display:block; width:clamp(240px,22.5vw,348px); aspect-ratio:3/2;
+    border-radius:15px; overflow:hidden; border:1px solid rgba(255,255,255,.10); text-decoration:none; color:#fff;
+    transform-style:preserve-3d; will-change:transform; opacity:0;
+    box-shadow:0 26px 60px -34px rgba(0,0,0,.9);
+    transition:transform .55s cubic-bezier(.2,.7,.2,1), box-shadow .4s ease, border-color .4s ease, opacity .5s ease, filter .4s ease;
+    background:
+      radial-gradient(120% 100% at 18% 8%,  color-mix(in srgb, var(--a) 48%, transparent), transparent 58%),
+      radial-gradient(130% 120% at 88% 96%, color-mix(in srgb, var(--a) 30%, transparent), transparent 62%),
+      linear-gradient(160deg,#1c2029,#101319); }
+
+  .gcard .g-ghost{ position:absolute; top:-.22em; right:.04em; font-family:var(--serif); font-weight:200;
+    font-size:clamp(74px,7.6vw,120px); line-height:1; color:color-mix(in srgb, var(--a) 42%, transparent); opacity:.5; pointer-events:none; }
+  .gcard .g-shine{ position:absolute; inset:0; opacity:0; transition:opacity .35s ease; pointer-events:none;
+    background:radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(255,255,255,.16), transparent 42%); }
+  .gcard:hover .g-shine{ opacity:1; }
+
+  .gcard .g-top{ position:absolute; top:14px; left:16px; right:16px; display:flex; justify-content:space-between; align-items:center;
+    font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-2); }
+  .gcard .g-year{ color:var(--ink-mute); }
+
+  .gcard .g-body{ position:absolute; left:17px; right:17px; bottom:15px; }
+  .gcard .g-title{ font-family:var(--serif); font-weight:400; font-size:clamp(19px,1.7vw,25px); line-height:1.08; letter-spacing:-.01em; color:#fff; }
+  .gcard .g-title em{ display:block; font-style:italic; font-weight:300; font-size:.78em; color:rgba(255,255,255,.68); margin-top:2px; }
+  .gcard .g-keys{ display:flex; flex-wrap:wrap; gap:6px; margin-top:11px; }
+  .gcard .g-keys span{ font-family:var(--mono); font-size:9px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-2);
+    border:1px solid var(--rule); border-radius:100px; padding:4px 9px; background:rgba(255,255,255,.02); transition:color .3s ease, border-color .3s ease; }
+  .gcard:hover .g-keys span{ border-color:color-mix(in srgb, var(--a) 45%, transparent); color:var(--ink); }
+
+  .gcard:hover{ border-color:color-mix(in srgb, var(--a) 60%, rgba(255,255,255,.1));
+    box-shadow:0 44px 96px -34px rgba(0,0,0,.95), 0 0 0 1px color-mix(in srgb, var(--a) 46%, transparent), 0 26px 74px -30px var(--a); }
+
+  .gcard.in{ opacity:1; }
+  /* recede the rest on hover — only when no topic is active */
+  .arch-rows:not(.filtered):hover .gcard.in:not(:hover){ opacity:.58; }
+
+  /* topic highlight: matching cards glow in their own colour, the rest recede */
+  .arch-rows .gcard.lit{ border-color:color-mix(in srgb, var(--a) 68%, transparent);
+    box-shadow:0 0 0 1px color-mix(in srgb, var(--a) 52%, transparent), 0 24px 64px -26px var(--a), 0 30px 70px -42px rgba(0,0,0,.92); }
+  .arch-rows .gcard.dim{ opacity:.24; filter:grayscale(.5) brightness(.72); }
+
+  @media (max-width:820px){
+    .arch{ min-height:0; margin-top:70px; padding:16px 16px 64px; perspective:none; }
+    .arch-inner{ width:100%; }
+    .arch-rows{ gap:16px; width:100%; align-items:center; }
+    .arch-row{ display:contents; }
+    .gcard{ width:70%; max-width:none; transform:none !important;
+      opacity:0; translate:0 28px;
+      transition:opacity .6s ease, translate .6s cubic-bezier(.2,.8,.2,1);
+      border-color:color-mix(in srgb, var(--a) 32%, rgba(255,255,255,.10));
+      background:
+        radial-gradient(130% 110% at 20% 6%, color-mix(in srgb, var(--a) 58%, transparent), transparent 60%),
+        radial-gradient(150% 130% at 85% 98%, color-mix(in srgb, var(--a) 40%, transparent), transparent 64%),
+        linear-gradient(160deg,#1c2029,#0f1216);
+      box-shadow:0 22px 48px -30px var(--a), 0 26px 60px -36px rgba(0,0,0,.9); }
+    .gcard.in{ opacity:1; translate:0 0; }
+    /* tap a topic filter → matching cards sort to the top of the list */
+    .arch-rows.filtered .gcard.lit{ order:1; }
+    .arch-rows.filtered .gcard.dim{ order:2; opacity:.5; filter:none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html#feat" class="nav-back">
+    <svg viewBox="0 0 22 8" fill="none"><path d="M0 4H21M21 4L17 1M21 4L17 7" stroke="currentColor" stroke-width="1.2"/></svg>
+    Back
+  </a>
+  <span class="brand">Gergő Honyák</span>
+  <span class="eyebrow">Archive</span>
+</nav>
+
+<main class="arch">
+  <div class="arch-inner">
+    <div class="arch-filters" id="filters"><!-- injected --></div>
+    <div class="arch-rows" id="rows"><!-- injected --></div>
+  </div>
+</main>
+
+<script src="assets/js/projects-data.js"></script>
+<script>
+/* muted, earthy accent per project — one hue each, all part of the same family */
+const ACCENT = {
+  'swinglab': '#6d92bd', 'gnn': '#8f7fb0', 'sentify': '#6faa9b', 'money-dashboard': '#7f9e6b',
+  'vtsz': '#bd8b63', 'prosperity': '#c0787f', 'waste-classifier': '#94a35f', 'npec': '#c39a5c',
+  'deckdoctor': '#c07d5f', 'ocr-receipts': '#a87f9e', 'internship': '#7b8bb0',
+};
+
+/* a few enticing keywords per card */
+const KEYS = {
+  'swinglab': ['Live capital', 'Momentum', 'Backtester'],
+  'gnn': ['Graph neural net', 'Alpha', 'Walk-forward'],
+  'sentify': ['Emotion AI', 'Auto-retrain', 'On-prem'],
+  'money-dashboard': ['Regime shift', 'Live breadth', 'Volatility'],
+  'vtsz': ['Vision-language', 'Self-hosted', '100% recall'],
+  'prosperity': ['Options', 'IV smile', 'Game theory'],
+  'waste-classifier': ['97.7% acc', 'MobileNet', 'Deployed'],
+  'npec': ['Root seg', 'Robotics', 'U-Net'],
+  'deckdoctor': ['GPT', 'Voice TTS', 'Hackathon'],
+  'ocr-receipts': ['OCR', 'LLM cleanup', 'Structured'],
+  'internship': ['RAG', 'Custom LLaMA', 'Avatar'],
+};
+
+/* which topics each project belongs to */
+const TOPICS = {
+  'swinglab': ['quant', 'mlops'],
+  'gnn': ['quant'],
+  'sentify': ['nlp', 'mlops'],
+  'money-dashboard': ['quant', 'mlops'],
+  'vtsz': ['cv', 'llm'],
+  'prosperity': ['quant'],
+  'waste-classifier': ['cv'],
+  'npec': ['cv'],
+  'deckdoctor': ['llm'],
+  'ocr-receipts': ['cv', 'llm'],
+  'internship': ['llm', 'mlops'],
+};
+
+const FILTERS = [
+  { key: 'all',   label: 'All' },
+  { key: 'quant', label: 'Quant' },
+  { key: 'cv',    label: 'Computer Vision' },
+  { key: 'nlp',   label: 'NLP' },
+  { key: 'llm',   label: 'LLM / RAG' },
+  { key: 'mlops', label: 'MLOps' },
+];
+
+/* ---- filter buttons ---- */
+const filterBar = document.getElementById('filters');
+FILTERS.forEach((f) => {
+  const b = document.createElement('button');
+  b.className = 'fbtn' + (f.key === 'all' ? ' active' : '');
+  b.dataset.key = f.key;
+  b.textContent = f.label;
+  filterBar.appendChild(b);
+});
+
+/* ---- lay the 11 out as 4 · 3 · 4 ---- */
+const ROWS = [4, 3, 4];
+const stage = document.getElementById('rows');
+let idx = 0;
+ROWS.forEach((count) => {
+  const row = document.createElement('div');
+  row.className = 'arch-row';
+  for (let k = 0; k < count && idx < PROJECTS.length; k++, idx++) {
+    const p = PROJECTS[idx];
+    const a = document.createElement('a');
+    a.className = 'gcard';
+    a.href = `project.html?id=${p.id}`;
+    a.dataset.id = p.id;
+    a.style.setProperty('--a', ACCENT[p.id] || '#6d92bd');
+    a.style.viewTransitionName = `ghost-${p.id}`;
+    const keys = (KEYS[p.id] || p.tags.slice(0, 3)).map(w => `<span>${w}</span>`).join('');
+    a.innerHTML = `
+      <span class="g-ghost">${p.n}</span>
+      <span class="g-shine"></span>
+      <div class="g-top"><span class="g-cat">${CAT_LABEL[p.cat]}</span><span class="g-year">${p.year}</span></div>
+      <div class="g-body">
+        <div class="g-title" style="view-transition-name: title-${p.id};">${p.title} <em>${p.em}</em></div>
+        <div class="g-keys">${keys}</div>
+      </div>`;
+    row.appendChild(a);
+  }
+  stage.appendChild(row);
+});
+
+const cards = Array.from(stage.querySelectorAll('.gcard'));
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* tuning */
+const LEAN = 15, TILT = 6, HLEAN = 24, HTILT = 18, LIFT = 60;
+
+/* base pose: every card leans toward the middle of the screen */
+function layout() {
+  if (reduce) return;
+  const cx = innerWidth / 2, cy = innerHeight / 2;
+  cards.forEach((c) => {
+    const r = c.getBoundingClientRect();
+    const dx = Math.max(-1, Math.min(1, ((r.left + r.width / 2) - cx) / (innerWidth / 2)));
+    const dy = Math.max(-1, Math.min(1, ((r.top + r.height / 2) - cy) / (innerHeight / 2)));
+    const brY = -dx * LEAN, brX = dy * TILT;
+    c.dataset.brx = brX; c.dataset.bry = brY;
+    if (!c._hover) c.style.transform = `rotateX(${brX}deg) rotateY(${brY}deg)`;
+  });
+}
+
+/* cursor-reactive tilt */
+if (!reduce) {
+  cards.forEach((c) => {
+    c.addEventListener('mouseenter', () => {
+      c._hover = true;
+      c.style.transition = 'box-shadow .4s ease, border-color .4s ease, opacity .4s ease, filter .4s ease';
+    });
+    c.addEventListener('mousemove', (e) => {
+      const r = c.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      const brX = +c.dataset.brx || 0, brY = +c.dataset.bry || 0;
+      c.style.transform =
+        `translateZ(${LIFT}px) rotateX(${(brX - py * HTILT).toFixed(2)}deg) rotateY(${(brY + px * HLEAN).toFixed(2)}deg) scale(1.05)`;
+      c.style.setProperty('--mx', ((px + 0.5) * 100).toFixed(1) + '%');
+      c.style.setProperty('--my', ((py + 0.5) * 100).toFixed(1) + '%');
+    });
+    c.addEventListener('mouseleave', () => {
+      c._hover = false;
+      c.style.transition = '';
+      const brX = +c.dataset.brx || 0, brY = +c.dataset.bry || 0;
+      c.style.transform = `rotateX(${brX}deg) rotateY(${brY}deg)`;
+    });
+  });
+}
+
+/* ---- topic highlight ---- */
+function applyFilter(key) {
+  stage.classList.toggle('filtered', key !== 'all');
+  cards.forEach((c) => {
+    const topics = TOPICS[c.dataset.id] || [];
+    c.classList.remove('lit', 'dim');
+    if (key !== 'all') c.classList.add(topics.includes(key) ? 'lit' : 'dim');
+  });
+}
+filterBar.addEventListener('click', (e) => {
+  const b = e.target.closest('.fbtn');
+  if (!b) return;
+  let key = b.dataset.key;
+  // click an active topic again → back to All
+  if (b.classList.contains('active') && key !== 'all') key = 'all';
+  filterBar.querySelectorAll('.fbtn').forEach(x => x.classList.toggle('active', x.dataset.key === key));
+  applyFilter(key);
+  if (matchMedia('(max-width:820px)').matches) window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+/* entrance: fan settles in (desktop); cards reveal on scroll (phone) */
+layout();
+if (matchMedia('(max-width:820px)').matches && 'IntersectionObserver' in window) {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+  cards.forEach(c => io.observe(c));
+} else {
+  const mid = (cards.length - 1) / 2;
+  cards.forEach((c, i) => { setTimeout(() => { c.classList.add('in'); }, 140 + Math.abs(i - mid) * 55); });
+}
+addEventListener('resize', layout);
+window.addEventListener('load', layout);
+
+if (window.gsap) gsap.from('.nav > *', { y: -20, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.08 });
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+# local leftovers, not part of the deployed site
+_backup/
+dark/
+
+# OS junk
+.DS_Store
+Thumbs.db

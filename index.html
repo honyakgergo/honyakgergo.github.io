@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Gergő Honyák · Portfolio (dark)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="view-transition" content="same-origin" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400;1,14..32,500;1,14..32,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="assets/css/site.css" />
+<link rel="stylesheet" href="assets/css/hero.css" />
+<link rel="stylesheet" href="assets/css/theme-dark.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="#" class="brand">Gergő Honyák</a>
+  <div class="nav-links">
+    <a href="#feat">Work</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <a href="#" class="nav-cta">CV ↓</a>
+</nav>
+
+<!-- ─── EQUITY-ROAD HERO ─────────────────────────────── -->
+<section class="ehero" id="ehero" data-screen-label="01 Hero">
+  <div class="ehero-sticky" id="eStage">
+    <canvas id="eroad"></canvas>
+    <div class="ehero-ui">
+
+      <div class="ehero-intro" id="eIntro">
+        <div class="kick">Systematic ML · Quantitative finance</div>
+        <h1 class="ehero-name">Gergő Honyák</h1>
+        <p class="ehero-roles">Data science student · <em>momentum trader</em></p>
+        <p class="ehero-tag">Third-year Applied Data Science &amp; AI at BUas, working at the seam of <em>machine learning</em> and <em>quantitative finance</em>. Scroll to ride my momentum strategy, backtested from 2016 to today and running live capital since January 2026.</p>
+        <div class="ehero-hint"><span class="bar"></span>scroll to ride the curve</div>
+      </div>
+
+      <div class="ehero-end" id="eEnd">
+        <div class="kick">MOM_BROAD · live capital since Jan 2026</div>
+        <h2 class="ehero-endtitle">My largest project.</h2>
+        <p class="ehero-endbody">It started with the momentum literature (Jegadeesh &amp; Titman, Antonacci's dual momentum) and grew into <em>SwingLab</em>, a platform I built to watch market behaviour, run technical analysis, and backtest strategies like this one. Every idea goes through out-of-sample testing, Monte Carlo and bootstrap resampling, with transaction costs and slippage modelled in, before it trades a cent. Since January it's been live with real money, riding the strongest names (mostly chips and semis), and it's up about 43% so far.</p>
+        <div class="ehero-stats">
+          <div class="es-row es-head"><span>Metric</span><span>Backtest</span><span>Live '26</span></div>
+          <div class="es-row"><span>Total return</span><span>+1,455%</span><span class="up">+43.7%</span></div>
+          <div class="es-row"><span>CAGR</span><span>31.8%</span><span>n/a</span></div>
+          <div class="es-row"><span>Sharpe</span><span>1.31</span><span class="up">2.05</span></div>
+          <div class="es-row"><span>Max drawdown</span><span>−20.7%</span><span class="up">−10.3%</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="ehero-after">
+
+<!-- ─── SKILL SPIRAL — "working vocabulary" (replaces the flat grid) ── -->
+<section class="vocab" id="vocab" data-screen-label="02 Tools">
+  <div class="vocab-stage" id="vocabStage">
+    <div class="vstage"><div class="vhelix" id="vhelix"></div></div>
+    <div class="vocab-head">
+      <h2>Tools I'm most <em>experienced</em> with.</h2>
+      <p>The ones I reach for most, one at a time. Scroll to spin the stack.</p>
+    </div>
+    <div class="vocab-readout">
+      <div class="val" id="vFocusName">Python</div>
+    </div>
+    <div class="vocab-hint">scroll to spin</div>
+  </div>
+</section>
+
+<div class="vocab-after">
+
+<!-- ─── FEATURED WORK — laying coverflow ──────── -->
+<section class="feat" id="feat" data-screen-label="02 Work">
+  <div class="feat-stage" id="featStage">
+    <div class="feat-wash"></div>
+    <div class="feat-head">
+      <div class="label">Featured work</div>
+      <h2 class="reveal-chars">Projects I'm <em>most proud of</em>.</h2>
+    </div>
+    <div class="feat-track" id="featTrack"><!-- injected --></div>
+    <div class="feat-readout">
+      <div class="fr-tag" id="featTag">Quantitative research &amp; trading platform</div>
+      <a class="fr-cta" id="featCta" href="project.html?id=swinglab"><span id="featCtaLabel">View SwingLab</span> <span class="arw">→</span></a>
+    </div>
+    <div class="feat-hint">keep scrolling to slide the deck sideways · click the front card to open</div>
+  </div>
+</section>
+
+<!-- ─── ABOUT ─────────────────────────────────── -->
+<header class="sect-head" id="about" data-screen-label="03 About">
+  <div class="left"></div>
+  <h2 class="reveal-chars">The person <em>behind</em> the work.</h2>
+</header>
+
+<section class="about">
+  <div class="about-photo-col" data-rv>
+    <div class="about-photo">
+      <img class="about-portrait" src="assets/images/me_image/me_image.jpeg" alt="Gergő Honyák" />
+    </div>
+  </div>
+
+  <div class="about-text">
+    <p class="lead" data-rv>
+      <span class="drop">I</span>'m a third-year Applied Data Science &amp; AI student at BUas, starting a pre-master at TU/e this September. I worked as a RAG intern, deploying the assistant on GCP. These days I'm mostly picking up new things in <em>statistics</em> and <em>ML</em>, and trying not to lose my own money on the quant strategies.
+    </p>
+
+    <p data-rv>
+      I started programming in Python back in 2022, building little things with Flask. Then I moved into data science at BUas and worked through the whole ladder: regression, classification, clustering, then the heavier stuff like computer vision, NLP, and MLOps.
+    </p>
+
+    <p data-rv>
+      What I enjoy most is finding patterns and solving problems with data, so when I started reading about <strong>quantitative finance</strong> it clicked: modelling markets, measuring risk, trying to squeeze out returns. That's what pulled me into building SwingLab, and into IMC Prosperity 4, where I competed solo against 18,800 teams and finished 223rd overall, 1st in the Netherlands on the manual round.
+    </p>
+
+    <p data-rv>
+      The book that first got me into quant was Marcos Lopez de Prado's <em>Advances in Financial Machine Learning</em>, still the one I go back to most.
+    </p>
+
+    <div class="about-side" data-rv>
+      <span class="k">Studying</span><span class="v">BSc Applied Data Science &amp; AI · BUas (3rd year) · GPA 4.0</span>
+      <span class="k">Next</span><span class="v">Pre-master Data Science &amp; AI · TU/e, from September</span>
+      <span class="k">Recent</span><span class="v">RAG assistant intern · deployed on GCP</span>
+      <span class="k">Focus</span><span class="v">Quantitative ML · graph learning · MLOps</span>
+      <span class="k">Stack</span><span class="v">Python · PyTorch · SQL · C++ · FastAPI · React · GCP</span>
+      <span class="k">Open to</span><span class="v">Quant research and trading internships in Amsterdam</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ───────────────────────────────────── -->
+<section class="cta" id="contact" data-screen-label="04 Contact">
+  <h2 class="line-mask">
+    <span class="line-mask"><span data-rv-line>Let's make</span></span>
+    <span class="line-mask"><span data-rv-line><em>something good</em></span></span>
+    <span class="line-mask"><span data-rv-line>and <span class="ochre">measurable.</span></span></span>
+  </h2>
+  <div class="cta-right">
+    <span class="eyebrow">Get in touch</span>
+    <a href="mailto:honyakgergo7@gmail.com" class="cta-mail" data-rv>
+      <span>honyakgergo7@gmail.com</span>
+      <span class="arrow">↗</span>
+    </a>
+    <div class="cta-links">
+      <a href="https://github.com/honyakgergo/Portfolio" target="_blank" rel="noopener" data-rv><span>GitHub</span><span class="arr">↗</span></a>
+      <a href="https://www.linkedin.com/in/gerg%C5%91-hony%C3%A1k-956a3632a/" target="_blank" rel="noopener" data-rv><span>LinkedIn</span><span class="arr">↗</span></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Gergő Honyák</span>
+  <span>Set in Inter &amp; JetBrains Mono</span>
+</footer>
+
+</div><!-- /.vocab-after -->
+</div><!-- /.ehero-after -->
+
+<script src="assets/js/projects-data.js"></script>
+<script src="assets/js/viz.js"></script>
+<script src="assets/js/road.js"></script>
+<script src="assets/js/spiral.js"></script>
+<script src="assets/js/featured.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+/* ─── SMOOTH "FLOWING" SCROLL (Lenis) ────────── */
+if (window.Lenis && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const lenis = new Lenis({
+    duration: 1.15,
+    easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smoothWheel: true, wheelMultiplier: 0.9, touchMultiplier: 1.4,
+  });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add(t => lenis.raf(t * 1000));
+  gsap.ticker.lagSmoothing(0);
+  window.__lenis = lenis;
+}
+
+/* ─── EQUITY-ROAD HERO ─────────────────────── */
+if (window.EquityRoad) EquityRoad.init({ canvas: 'eroad', section: 'ehero', stage: 'eStage', intro: 'eIntro', end: 'eEnd' });
+const heroTl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+heroTl.from('.nav > *', { y: -16, opacity: 0, duration: 1, stagger: 0.08 }, 0.1);
+heroTl.from('#eIntro .kick', { y: 14, opacity: 0, duration: 0.9 }, 0.5);
+heroTl.from('#eIntro .ehero-name', { y: 26, opacity: 0, duration: 1.5, ease: 'power3.out' }, 0.6);
+heroTl.from('#eIntro .ehero-roles', { y: 20, opacity: 0, duration: 1.1, ease: 'power3.out' }, 0.95);
+heroTl.from('#eIntro .ehero-tag', { y: 20, opacity: 0, duration: 1.2, ease: 'power3.out' }, 1.15);
+heroTl.from('#eIntro .ehero-hint', { y: 14, opacity: 0, duration: 1.0, ease: 'power3.out' }, 1.25);
+
+/* ─── SCROLL REVEALS ────────────────────────── */
+gsap.utils.toArray('[data-rv-line]').forEach(el => {
+  gsap.from(el, { yPercent: 105, duration: 1.4, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 88%' } });
+});
+gsap.utils.toArray('[data-rv]').forEach(el => {
+  gsap.from(el, { y: 24, opacity: 0, duration: 1.3, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 90%' } });
+});
+
+/* ─── PER-LETTER HEADING REVEAL ──────────── */
+function splitReveal(h2) {
+  const nodes = Array.from(h2.childNodes);
+  h2.innerHTML = '';
+  const chars = [];
+  const emitWord = (word, target) => {
+    if (!word) return;
+    const w = document.createElement('span'); w.className = 'rword';   // keeps each word unbroken
+    for (const ch of word) {
+      const m = document.createElement('span'); m.className = 'rch';
+      const i = document.createElement('span'); i.className = 'rch-i'; i.textContent = ch;
+      m.appendChild(i); w.appendChild(m); chars.push(i);
+    }
+    target.appendChild(w);
+  };
+  const emitText = (text, target) => {
+    const parts = (text || '').split(' ');
+    parts.forEach((word, idx) => {
+      emitWord(word, target);
+      if (idx < parts.length - 1) target.appendChild(document.createTextNode(' '));
+    });
+  };
+  nodes.forEach(node => {
+    if (node.nodeType === 1 && node.tagName === 'EM') {
+      const em = document.createElement('em'); h2.appendChild(em);
+      emitText(node.textContent, em);
+    } else {
+      emitText(node.textContent, h2);
+    }
+  });
+  return chars;
+}
+gsap.utils.toArray('.reveal-chars').forEach(h2 => {
+  const chars = splitReveal(h2);
+  gsap.fromTo(chars, { yPercent: 130 }, {
+    yPercent: 0, duration: 0.7, ease: 'power3.out', stagger: 0.028,
+    scrollTrigger: { trigger: h2, start: 'top 84%' },
+  });
+});
+
+window.addEventListener('load', () => {
+  ScrollTrigger.refresh();
+  if (location.hash === '#feat') {
+    const el = document.getElementById('feat');
+    if (el) { if (window.__lenis) window.__lenis.scrollTo(el, { immediate: true }); else el.scrollIntoView(); }
+  }
+});
+</script>
+
+</body>
+</html>
