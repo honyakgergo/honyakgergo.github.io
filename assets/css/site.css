@@ -26,8 +26,8 @@
   --rust: #3b82f6;
   --blue: #3b82f6;
   --blue-soft: rgba(59, 130, 246, 0.12);
-  --serif: "Inter", system-ui, sans-serif;
-  --sans: "Inter", system-ui, sans-serif;
+  --serif: "Geist", system-ui, sans-serif;
+  --sans: "Geist", system-ui, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, monospace;
 }
 

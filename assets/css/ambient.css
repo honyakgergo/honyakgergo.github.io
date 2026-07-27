@@ -1,0 +1,42 @@
+/* ══════════════════════════════════════════════════════════════
+   AMBIENT — optional cool colour grading over the dark theme.
+   Additive & non-destructive. Loaded AFTER theme-dark.css.
+
+   It adds two fixed, viewport-wide layers that sit above the page
+   surfaces but below the nav:
+     · a soft cool wash (blue up top, a whisper of indigo low-right,
+       a faint sheen along the very top edge) so the page isn't a
+       flat black — the "light" stays put while content scrolls past.
+     · fine film grain, which breaks up gradient banding and gives
+       the whole thing a filmic, non-plastic texture.
+
+   TO REVERT: remove the three `<link ... ambient.css>` lines from
+   index.html, archive.html and project.html (and delete this file).
+   Nothing else depends on it.
+
+   TO TUNE: the strength lives in the rgba alphas below (wash) and
+   the `opacity` on body::after (grain). Lower = subtler.
+   ══════════════════════════════════════════════════════════════ */
+
+body::before{
+  content:'';
+  position:fixed; inset:0; z-index:60; pointer-events:none;
+  background:
+    radial-gradient(58% 48% at 12% -6%,  rgba(103,146,240,.12), transparent 60%),
+    radial-gradient(48% 42% at 97% 4%,   rgba(96,126,224,.07),  transparent 58%),
+    radial-gradient(82% 72% at 86% 108%, rgba(104,92,160,.09),  transparent 60%),
+    linear-gradient(180deg, rgba(150,180,255,.05), transparent 12%);
+}
+
+body::after{
+  content:'';
+  position:fixed; inset:0; z-index:61; pointer-events:none;
+  opacity:.045; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:150px 150px;
+}
+
+@media (max-width:720px){
+  /* ease the wash back a touch on small screens */
+  body::before{ opacity:.85; }
+}

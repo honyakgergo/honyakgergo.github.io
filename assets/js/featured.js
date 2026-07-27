@@ -19,12 +19,12 @@
   };
   /* short, punchy readout line per project */
   const TAG = {
-    'swinglab': 'Quantitative research & trading platform',
-    'gnn': 'Graph neural nets for equity factors',
-    'sentify': 'Media emotion classifier · full MLOps',
-    'money-dashboard': 'Live market cockpit, driven by the clock',
-    'prosperity': '#223 / 18,800 · voucher IV smile',
-    'npec': 'U-Net → Dijkstra → robotic arm',
+    'swinglab': 'A quantitative research & trading platform, now running live on real capital',
+    'gnn': 'Graph neural nets for cross-sectional equity return prediction',
+    'sentify': 'A media emotion classifier wrapped in a full auto-retraining MLOps stack',
+    'money-dashboard': 'A live market cockpit that reads regime shifts through the trading day',
+    'prosperity': 'Solo entry, 223rd of 18,800 teams — options pricing off the IV smile',
+    'npec': 'Root segmentation to robotics: U-Net → Dijkstra length → RL-controlled arm',
   };
   /* a few enticing keywords per card (mirrors the archive) */
   const KEYS = {
@@ -40,12 +40,12 @@
   const CARDS = feat.map(p => ({
     id: p.id, num: p.n, name: p.title, em: p.em,
     tag: TAG[p.id] || p.type, accent: ACCENT[p.id] || '#6d92bd',
-    keys: KEYS[p.id] || (p.tags || []).slice(0, 3), href: `project.html?id=${p.id}`,
+    keys: KEYS[p.id] || (p.tags || []).slice(0, 3), href: `/project/?id=${p.id}`,
   }));
   CARDS.push({
     id: 'archive', num: '( all )', name: 'More projects', em: '',
     tag: 'The full archive — 11 projects', accent: '#7b8bb0',
-    img: '', href: 'archive.html', more: true,
+    img: '', href: '/archive/', more: true,
   });
 
   const N = CARDS.length;
@@ -71,9 +71,10 @@
     } else {
       el.innerHTML =
         `<div class="fface" style="--a:${c.accent}; background:
-             radial-gradient(120% 100% at 18% 8%,  color-mix(in srgb, ${c.accent} 50%, transparent), transparent 58%),
-             radial-gradient(130% 120% at 88% 96%, color-mix(in srgb, ${c.accent} 32%, transparent), transparent 62%),
-             linear-gradient(160deg,#1c2029,#101319);">
+             linear-gradient(180deg, rgba(255,255,255,.07), transparent 34%),
+             radial-gradient(120% 100% at 18% 8%,  color-mix(in srgb, ${c.accent} 64%, transparent), transparent 60%),
+             radial-gradient(130% 120% at 88% 96%, color-mix(in srgb, ${c.accent} 44%, transparent), transparent 64%),
+             linear-gradient(160deg,#2b3141,#171b24);">
            <span class="f-ghost">${c.num}</span>
            <div class="fmeta">
              <span class="ft">${c.name}${c.em ? ` <em>${c.em}</em>` : ''}</span>
@@ -85,9 +86,56 @@
     track.appendChild(el);
   });
 
-  /* ---- MOBILE: native horizontal swipe carousel (no scroll-jacking) ---- */
+  /* ---- MOBILE: swipe + arrow carousel (fixed-size cards, no coverflow scaling) ---- */
   if (matchMedia('(max-width:820px)').matches) {
-    let cur = -1;
+    let cur = -1, targetIdx = 0, animating = false, sraf = null;
+
+    // eased, hand-feeling glide to a card (softer than native smooth-scroll)
+    const easeOut = t => 1 - Math.pow(1 - t, 3);   // decelerates like a flick coasting to rest
+    const animateScroll = (to, dur = 560) => {
+      if (sraf) cancelAnimationFrame(sraf);
+      const start = track.scrollLeft, delta = to - start;
+      if (Math.abs(delta) < 1) return;
+      animating = true;
+      track.style.scrollSnapType = 'none';   // stop snap from fighting the tween
+      const t0 = performance.now();
+      const stepA = (now) => {
+        const k = Math.min(1, (now - t0) / dur);
+        track.scrollLeft = start + delta * easeOut(k);
+        if (k < 1) { sraf = requestAnimationFrame(stepA); }
+        else { sraf = null; animating = false; track.style.scrollSnapType = ''; }
+      };
+      sraf = requestAnimationFrame(stepA);
+    };
+    const goTo = (i) => {
+      targetIdx = clamp(Math.round(i), 0, N - 1);
+      const el = CARDS[targetIdx].el;
+      animateScroll(el.offsetLeft - (track.clientWidth - el.offsetWidth) / 2);
+    };
+
+    // prev / next arrows + position dots, dropped in just under the cards
+    const nav = document.createElement('div');
+    nav.className = 'feat-nav';
+    const prev = document.createElement('button');
+    prev.className = 'fn-prev'; prev.setAttribute('aria-label', 'Previous project');
+    prev.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const next = document.createElement('button');
+    next.className = 'fn-next'; next.setAttribute('aria-label', 'Next project');
+    next.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const dots = document.createElement('div');
+    dots.className = 'fn-dots';
+    const dotEls = CARDS.map((c, i) => {
+      const d = document.createElement('i');
+      d.addEventListener('click', () => goTo(i));
+      dots.appendChild(d);
+      return d;
+    });
+    nav.append(prev, dots, next);
+    const ro = stage.querySelector('.feat-readout');
+    stage.insertBefore(nav, ro || null);
+    prev.addEventListener('click', () => goTo(targetIdx - 1));
+    next.addEventListener('click', () => goTo(targetIdx + 1));
+
     const syncReadout = () => {
       const mid = track.scrollLeft + track.clientWidth / 2;
       let best = 0, bestD = Infinity;
@@ -99,17 +147,25 @@
       }
       if (best !== cur) {
         cur = best;
+        if (!animating) targetIdx = best;
         const c = CARDS[best];
         stage.style.setProperty('--focus', c.accent);
         if (tagEl) tagEl.textContent = c.tag;
         if (ctaLbl) ctaLbl.textContent = c.more ? 'Browse the archive' : 'View ' + c.name;
         if (ctaEl) ctaEl.setAttribute('href', c.href);
         for (let i = 0; i < N; i++) CARDS[i].el.classList.toggle('focused', i === best);
+        dotEls.forEach((d, i) => d.classList.toggle('on', i === best));
+        prev.disabled = best === 0;
+        next.disabled = best === N - 1;
       }
     };
     let ticking = false;
     track.addEventListener('scroll', () => {
       if (!ticking) { ticking = true; requestAnimationFrame(() => { syncReadout(); ticking = false; }); }
+    }, { passive: true });
+    // if the user grabs the track mid-glide, hand control straight back to them
+    track.addEventListener('touchstart', () => {
+      if (sraf) { cancelAnimationFrame(sraf); sraf = null; animating = false; track.style.scrollSnapType = ''; }
     }, { passive: true });
     if (stage) stage.style.opacity = '1';
     syncReadout();
@@ -127,6 +183,7 @@
   let curFocus = -1;
 
   function frame() {
+    if (matchMedia('(max-width:820px)').matches) { stage.style.opacity = '1'; requestAnimationFrame(frame); return; }  // never drive the coverflow at phone widths
     if (!cardW) measure();
     const r = section.getBoundingClientRect();
     const vh = innerHeight;
@@ -154,8 +211,8 @@
       c.el.style.pointerEvents = ao < 0.55 ? 'auto' : 'none';   // only the front card is clickable
       c.el.classList.toggle('focused', ao < 0.5);
       c.el.style.boxShadow = ao < 0.5
-        ? `0 50px 110px -36px rgba(0,0,0,.95), 0 0 0 1px ${c.accent}66, 0 30px 90px -30px ${c.accent}70`
-        : '0 40px 90px -44px rgba(0,0,0,.9)';
+        ? `0 50px 110px -36px rgba(0,0,0,.95), 0 30px 90px -28px ${c.accent}66, 0 70px 170px -50px ${c.accent}4a`
+        : `0 40px 90px -44px rgba(0,0,0,.9), 0 30px 100px -50px ${c.accent}26`;
     }
 
     const fi = clamp(Math.round(pos), 0, N - 1);

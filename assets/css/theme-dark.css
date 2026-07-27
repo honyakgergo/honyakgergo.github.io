@@ -151,7 +151,7 @@ html.lenis, html.lenis body{ height:auto; }
 /* ── MOBILE: native horizontal swipe carousel (replaces the scroll-scrubbed coverflow) ── */
 @media (max-width:820px){
   .feat{ height:auto; }
-  .feat-stage{ position:relative; top:auto; height:auto; overflow:visible; perspective:none; padding:104px 0 76px; }
+  .feat-stage{ position:relative; top:auto; height:auto; overflow:visible; perspective:none; padding:104px 0 76px; opacity:1 !important; }
   .feat-wash{ display:none; }
   .feat-head{ position:relative; top:auto; left:auto; right:auto; margin:0 22px 22px; }
   .feat-track{ position:relative; left:auto; top:auto; transform:none; transform-style:flat;
@@ -159,9 +159,24 @@ html.lenis, html.lenis body{ height:auto; }
     -webkit-overflow-scrolling:touch; padding:8px 16px 16px; scrollbar-width:none; }
   .feat-track::-webkit-scrollbar{ display:none; }
   .fcard{ position:relative; left:auto; top:auto; margin:0; width:82vw; --cw:82vw;
-    flex:0 0 82vw; transform:none; opacity:1; filter:none; scroll-snap-align:center; }
+    flex:0 0 82vw; transform:none !important; opacity:1 !important; filter:none !important;
+    box-shadow:0 30px 70px -40px rgba(0,0,0,.9) !important; scroll-snap-align:center; }
   .feat-readout{ position:relative; left:auto; right:auto; bottom:auto; margin:20px 22px 0; }
-  .feat-hint{ position:relative; left:auto; right:auto; bottom:auto; margin-top:12px; }
+  /* reserve two lines so the readout height is constant per card — stops the section below from jumping */
+  .feat-readout .fr-tag{ min-height:2.8em; line-height:1.4; display:flex; align-items:center; justify-content:center; }
+  /* prev / next arrow + dot controls (mobile only) */
+  .feat-nav{ display:flex; align-items:center; justify-content:center; gap:16px; margin:16px 22px 0; }
+  .feat-nav button{ width:44px; height:44px; border-radius:50%; border:1px solid var(--rule);
+    background:rgba(255,255,255,.04); display:flex; align-items:center; justify-content:center;
+    color:var(--ink-2); transition:border-color .3s ease, color .3s ease, background .3s ease, opacity .3s ease; }
+  .feat-nav button:active{ background:rgba(255,255,255,.09); color:var(--ink); }
+  .feat-nav button:disabled{ opacity:.28; }
+  .feat-nav button svg{ width:17px; height:17px; }
+  .fn-dots{ display:flex; align-items:center; gap:7px; }
+  .fn-dots i{ width:6px; height:6px; border-radius:50%; background:var(--ink-faint); opacity:.45;
+    transition:opacity .3s ease, background .3s ease, transform .3s ease; cursor:pointer; }
+  .fn-dots i.on{ opacity:1; background:var(--focus,#5b93ff); transform:scale(1.35); }
+  .feat-hint{ display:none; }
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -174,7 +189,14 @@ html.lenis, html.lenis body{ height:auto; }
 .vocab-stage{
   position:sticky; top:0; height:100vh; overflow:hidden;
   --focus:#5b93ff; transition:--focus .7s ease;
-  background:radial-gradient(ellipse 70% 55% at 50% 46%, color-mix(in srgb, var(--focus) 15%, transparent), transparent 62%);
+  /* layered field: main bloom centred behind the tiles (50% 50%), a faint
+     off-centre highlight to break the symmetry, then an edge vignette for depth,
+     over the paper base. Reads as light spilling off the stack, not a sticker. */
+  background:
+    radial-gradient(115% 95% at 50% 50%, color-mix(in srgb, var(--focus) 17%, transparent), transparent 62%),
+    radial-gradient(60% 52% at 64% 46%, color-mix(in srgb, var(--focus) 8%, transparent), transparent 66%),
+    radial-gradient(140% 135% at 50% 50%, transparent 48%, rgba(0,0,0,.55)),
+    var(--paper);
 }
 .vstage{ position:absolute; inset:0; perspective:1150px; }
 .vhelix{ position:absolute; left:50%; top:50%; transform-style:preserve-3d; }
@@ -188,10 +210,16 @@ html.lenis, html.lenis body{ height:auto; }
 .vtile .ic{ width:120px; height:120px; display:flex; align-items:center; justify-content:center; }
 .vtile .ic img{ width:100%; height:100%; display:block; }
 .vtile .nm{ font-family:var(--mono); font-size:23px; letter-spacing:.04em; color:var(--ink-2); white-space:nowrap; }
-.vtile.focus{ border-color:var(--focus);
-  box-shadow:0 0 0 2px color-mix(in srgb, var(--focus) 55%, transparent),
-             0 40px 110px -34px color-mix(in srgb, var(--focus) 55%, transparent),
-             0 30px 80px -48px rgba(0,0,0,.9); }
+.vtile.focus{ border-color:color-mix(in srgb, var(--focus) 42%, var(--rule));
+  /* no hard ring — a graduated halo instead: a faint edge kiss, a tight bloom,
+     then two progressively softer/wider washes, plus a dark grounding shadow.
+     Lower saturation than before so it glows rather than neon-outlines. */
+  box-shadow:
+    0 0 1px color-mix(in srgb, var(--focus) 38%, transparent),
+    0 0 20px -4px color-mix(in srgb, var(--focus) 32%, transparent),
+    0 16px 55px -20px color-mix(in srgb, var(--focus) 28%, transparent),
+    0 46px 120px -40px color-mix(in srgb, var(--focus) 24%, transparent),
+    0 30px 80px -48px rgba(0,0,0,.9); }
 .vtile.focus .nm{ color:var(--focus); }
 
 .vocab-head{ position:absolute; top:clamp(96px,13vh,150px); left:clamp(24px,5vw,72px); max-width:min(460px,78vw); z-index:5; pointer-events:none; }

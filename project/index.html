@@ -8,15 +8,15 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400;1,14..32,500;1,14..32,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Geist:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-<link rel="stylesheet" href="assets/css/site.css" />
-<link rel="stylesheet" href="assets/css/theme-dark.css" />
+<link rel="stylesheet" href="/assets/css/site.css" />
+<link rel="stylesheet" href="/assets/css/theme-dark.css" />
 </head>
 <body>
 
 <nav class="nav">
-  <a href="archive.html" class="nav-back">
+  <a href="/archive/" class="nav-back">
     <svg viewBox="0 0 22 8" fill="none"><path d="M0 4H21M21 4L17 1M21 4L17 7" stroke="currentColor" stroke-width="1.2"/></svg>
     Archive
   </a>
@@ -26,7 +26,7 @@
 
 <div id="app"><!-- injected --></div>
 
-<script src="assets/js/projects-data.js"></script>
+<script src="/assets/js/projects-data.js"></script>
 <script>
 /* ─── Sentify architecture diagram, native SVG matching the dark tokens ── */
 function sentifyDiagram() {
@@ -122,7 +122,7 @@ function exhibitMarkup(e) {
   if (e.placeholder) {
     return `<div class="exhibit-frame placeholder"><span>Awaiting exhibit — image to be added</span></div><div class="exhibit-cap">${e.caption}</div>`;
   }
-  const _src = e.src ? e.src : `assets/images/${p.id}/${e.img}`;
+  const _src = e.src ? '/' + e.src : `/assets/images/${p.id}/${e.img}`;
   return `<div class="exhibit-frame"><img src="${_src}" alt="${e.caption}" loading="lazy" /></div><div class="exhibit-cap">${e.caption}</div>`;
 }
 
@@ -153,8 +153,8 @@ document.getElementById('app').innerHTML = `
     </div>
   </div>
   <div class="d-nav">
-    <a href="project.html?id=${prev.id}"><small>← Previous</small>${prev.title}</a>
-    <a href="project.html?id=${next.id}" class="next"><small>Next →</small>${next.title}</a>
+    <a href="/project/?id=${prev.id}"><small>← Previous</small>${prev.title}</a>
+    <a href="/project/?id=${next.id}" class="next"><small>Next →</small>${next.title}</a>
   </div>
 `;
 </script>

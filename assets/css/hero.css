@@ -8,7 +8,7 @@
    road.js shows/hides the stage as the hero section scrolls by.
    ══════════════════════════════════════════════════════════════ */
 
-.ehero { position: relative; height: 420vh; background: var(--paper); }
+.ehero { position: relative; height: 100vh; background: var(--paper); }
 
 /* everything after the hero sits above the fixed stage and wipes over it on exit */
 .ehero-after { position: relative; z-index: 2; background: var(--paper); }
@@ -92,8 +92,8 @@
 .about-photo .ph-text span { color: rgba(255, 255, 255, 0.92); text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5); }
 
 @media (max-width: 820px) {
-  .ehero { height: 360vh; }
-  .ehero-intro { top: clamp(120px, 18vh, 180px); width: 92vw; }
+  .ehero { height: 100vh; }
+  .ehero-intro { top: 50%; transform: translate(-50%, -50%); width: 92vw; }
   .ehero-name { font-size: clamp(38px, 11vw, 62px); white-space: normal; }
   .ehero-roles { font-size: clamp(17px, 4.6vw, 26px); }
   .ehero-tag { font-size: 15px; max-width: 92vw; }

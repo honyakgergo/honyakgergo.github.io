@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Hero → strategy · real equity curve (DEMO)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!--
+  STANDALONE DEMO v6 — does not touch index.html or shared assets.
+  Real MOM_BROAD backtest series (pulled from road.js, 2016–2026).
+  Land centered on the name → scroll docks it left → the real curve
+  draws itself with a glowing tip riding the line → strategy + table
+  rise in → release to Tools. Delete anytime.
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+<style>
+:root{
+  --paper:#0b0c0e; --paper-2:#16181c; --paper-3:#23262c;
+  --ink:#f2f2f5; --ink-2:#c7c9d1; --ink-mute:#8a8d97; --ink-faint:#5f636d;
+  --rule:rgba(255,255,255,.12); --rule-soft:rgba(255,255,255,.06);
+  --blue:#5b93ff; --blue-soft:rgba(91,147,255,.14); --down:#f0863f;
+  --sans:"Geist",system-ui,sans-serif; --serif:"Geist",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-weight:300;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+::selection{background:var(--blue);color:#0b0c0e;}
+
+/* nav */
+.nav{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;
+  padding:18px 36px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-mute);z-index:100;background:rgba(11,12,14,.72);
+  backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid var(--rule-soft);}
+.nav .brand{font-family:var(--serif);font-style:italic;font-weight:400;font-size:20px;letter-spacing:-.01em;text-transform:none;color:var(--ink);}
+.nav-links{display:flex;gap:2px;padding:4px;border:1px solid var(--rule);border-radius:100px;background:color-mix(in srgb,var(--ink) 5%,transparent);}
+.nav-links a{font-family:var(--sans);font-size:13px;font-weight:400;letter-spacing:.01em;text-transform:none;color:var(--ink-mute);padding:7px 17px;border-radius:100px;transition:color .3s,background .3s;}
+.nav-links a:hover{color:var(--ink);background:color-mix(in srgb,var(--ink) 9%,transparent);}
+.nav-cta{color:var(--ink);padding:8px 14px;border:1px solid var(--rule);border-radius:100px;transition:all .4s;}
+.nav-cta:hover{border-color:var(--ink);color:var(--paper);background:var(--ink);}
+@media (max-width:720px){.nav{padding:14px 16px;}.nav-links a{padding:6px 12px;font-size:12px;}.nav .brand{font-size:15px;}}
+
+/* pinned bridge */
+.bridge{position:relative;}
+.stage{position:relative;height:100vh;display:grid;grid-template-columns:1fr 1.08fr;
+  gap:clamp(28px,5vw,72px);align-items:center;padding:120px clamp(24px,5vw,72px) 84px;overflow:hidden;}
+.stage::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(52% 44% at 74% 42%, var(--blue-soft), transparent 64%),
+             radial-gradient(130% 125% at 50% 50%, transparent 60%, rgba(0,0,0,.5));}
+.stage > *{position:relative;z-index:1;}
+
+.left-col{position:relative;}
+
+/* screen 1 — centered over the full viewport, then docks left */
+.intro{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 clamp(24px,5vw,72px);will-change:transform;}
+.kick{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mute);display:flex;align-items:center;gap:12px;margin-bottom:22px;}
+.kick .dot{width:7px;height:7px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 4px var(--blue-soft);}
+.i-name{font-family:var(--serif);font-weight:300;font-size:clamp(52px,7.6vw,118px);line-height:.96;letter-spacing:-.03em;color:var(--ink);}
+.i-roles{margin-top:18px;font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(19px,2.2vw,32px);line-height:1.2;color:var(--ink-2);letter-spacing:-.01em;}
+.i-roles em{color:var(--blue);}
+.i-tag{margin-top:24px;max-width:56ch;font-weight:300;font-size:clamp(15px,1.2vw,19px);line-height:1.55;color:var(--ink-2);}
+.i-tag em{font-style:italic;color:var(--blue);}
+.i-hint{margin-top:32px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mute);display:flex;align-items:center;justify-content:center;gap:12px;}
+.i-hint .bar{width:46px;height:1px;background:linear-gradient(90deg,transparent,var(--ink-faint),transparent);}
+
+/* screen 2 — strategy narrative + full table */
+.end{opacity:0;}
+.end .kick{color:var(--blue);margin-bottom:14px;}
+.end h2{font-family:var(--serif);font-weight:300;font-size:clamp(30px,3.6vw,52px);line-height:1.02;letter-spacing:-.02em;color:var(--ink);}
+.end .body{margin-top:18px;max-width:52ch;font-size:clamp(14px,1.05vw,16.5px);line-height:1.62;color:var(--ink-2);}
+.end .body em{font-style:italic;color:var(--blue);}
+.tbl{margin-top:24px;font-family:var(--mono);font-size:12.5px;border-top:1px solid var(--rule);max-width:520px;}
+.tbl .row{display:grid;grid-template-columns:1.4fr .8fr .8fr;gap:10px;padding:9px 0;border-bottom:1px solid var(--rule-soft);}
+.tbl .row span:nth-child(1){color:var(--ink-mute);}
+.tbl .row span:nth-child(2),.tbl .row span:nth-child(3){text-align:right;color:var(--ink);}
+.tbl .row.head span{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)!important;}
+.tbl .row span.up{color:var(--blue);}
+
+/* chart column */
+.chart-col{opacity:0;}
+.chart-col .cap{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:10px;}
+.eq{width:100%;height:auto;display:block;}
+.eq .eq-dot,.eq .eq-ring{transform-box:fill-box;transform-origin:center;}
+
+/* next section */
+.after{border-top:1px solid var(--rule);background:var(--paper);}
+.teaser{max-width:1200px;margin:0 auto;padding:clamp(70px,10vh,120px) clamp(24px,5vw,72px);display:grid;grid-template-columns:1fr 2fr;gap:48px;align-items:end;}
+.teaser .num{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-mute);}
+.teaser .lbl{font-family:var(--serif);font-style:italic;font-size:26px;font-weight:300;color:var(--blue);margin-top:12px;}
+.teaser h2{font-family:var(--serif);font-weight:300;font-size:clamp(30px,4.4vw,60px);line-height:1.04;letter-spacing:-.02em;}
+.teaser h2 em{font-style:italic;color:var(--blue);}
+.teaser p{margin-top:18px;max-width:44ch;font-size:16px;line-height:1.6;color:var(--ink-2);}
+
+.demo-badge{position:fixed;right:14px;bottom:14px;z-index:200;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);border:1px solid var(--rule-soft);border-radius:100px;padding:6px 12px;background:rgba(11,12,14,.7);backdrop-filter:blur(8px);}
+
+@media (max-width:900px){
+  .stage{grid-template-columns:1fr;gap:26px;padding:104px 22px 70px;align-content:center;}
+  .i-hint .bar{display:none;}
+  .teaser{grid-template-columns:1fr;gap:16px;}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="#" class="brand">Gergő Honyák</a>
+  <div class="nav-links"><a href="#tools">Work</a><a href="#tools">About</a><a href="#tools">Contact</a></div>
+  <a href="#" class="nav-cta">CV ↓</a>
+</nav>
+
+<section class="bridge">
+  <div class="stage">
+
+    <div class="left-col">
+      <div class="end">
+        <div class="kick">MOM_BROAD · live capital since Jan 2026</div>
+        <h2>My largest project.</h2>
+        <p class="body">It started with the momentum literature (Jegadeesh &amp; Titman, Antonacci's dual momentum) and grew into <em>SwingLab</em>, a platform I built to watch markets, run technical analysis, and backtest strategies like this one. Every idea goes through out-of-sample testing, Monte Carlo and bootstrap resampling, with costs and slippage modelled in, before it trades a cent. Since January it's been live with real money, riding the strongest names, and it's up about 43% so far.</p>
+        <div class="tbl">
+          <div class="row head"><span>Metric</span><span>Backtest</span><span>Live '26</span></div>
+          <div class="row"><span>Total return</span><span>+1,455%</span><span class="up">+43.7%</span></div>
+          <div class="row"><span>CAGR</span><span>31.8%</span><span>n/a</span></div>
+          <div class="row"><span>Sharpe</span><span>1.31</span><span class="up">2.05</span></div>
+          <div class="row"><span>Max drawdown</span><span>−20.7%</span><span class="up">−10.3%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- chart (real series; points injected by JS) -->
+    <div class="chart-col">
+      <div class="cap">MOM_BROAD · backtested equity, 2016 → 2026</div>
+      <svg class="eq" viewBox="0 0 640 340" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="eqfill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#5b93ff" stop-opacity="0.22"/>
+            <stop offset="100%" stop-color="#5b93ff" stop-opacity="0"/>
+          </linearGradient>
+          <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/></feMerge>
+          </filter>
+        </defs>
+
+        <!-- gridlines (0 → 200k) -->
+        <g stroke="rgba(255,255,255,.07)" stroke-dasharray="2 6">
+          <line x1="48" y1="40" x2="616" y2="40"/>
+          <line x1="48" y1="103" x2="616" y2="103"/>
+          <line x1="48" y1="166" x2="616" y2="166"/>
+          <line x1="48" y1="229" x2="616" y2="229"/>
+          <line x1="48" y1="292" x2="616" y2="292"/>
+        </g>
+        <g font-family="JetBrains Mono, monospace" font-size="9" fill="#5f636d" text-anchor="end">
+          <text x="41" y="43">200k</text>
+          <text x="41" y="106">150k</text>
+          <text x="41" y="169">100k</text>
+          <text x="41" y="232">50k</text>
+          <text x="41" y="295">0</text>
+        </g>
+
+        <path class="eq-fill" d="" fill="url(#eqfill)" opacity="0"/>
+        <polyline class="eq-glow" points="" fill="none" stroke="#5b93ff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity=".40" filter="url(#glow)"/>
+        <polyline class="eq-curve" points="" fill="none" stroke="#5b93ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <!-- glowing tip that rides the line as it draws (the spice) -->
+        <circle class="eq-tip" r="4.5" fill="#cfe0ff" filter="url(#glow)" opacity="0"/>
+        <!-- resting end marker -->
+        <circle class="eq-ring" r="5" fill="none" stroke="#5b93ff" stroke-width="1.5" opacity="0"/>
+        <circle class="eq-dot" r="4.5" fill="#5b93ff" opacity="0"/>
+
+        <!-- year labels -->
+        <g font-family="JetBrains Mono, monospace" font-size="9" fill="#5f636d" text-anchor="middle">
+          <text x="48"  y="312">2016</text>
+          <text x="113" y="312">2018</text>
+          <text x="232" y="312">2020</text>
+          <text x="349" y="312">2022</text>
+          <text x="468" y="312">2024</text>
+          <text x="585" y="312">2026</text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- screen 1 overlay — centered over the whole stage, docks left on scroll -->
+    <div class="intro">
+      <div class="kick"><span class="dot"></span>Systematic ML · Quantitative finance</div>
+      <h1 class="i-name">Gergő Honyák</h1>
+      <p class="i-roles">Data science student · <em>momentum trader</em></p>
+      <p class="i-tag">Third-year Applied Data Science &amp; AI at BUas, working at the seam of <em>machine learning</em> and <em>quantitative finance</em>. Scroll to ride my momentum strategy, backtested from 2016 to today and running live capital since January 2026.</p>
+      <div class="i-hint"><span class="bar"></span>scroll to ride the curve</div>
+    </div>
+
+  </div>
+</section>
+
+<section class="after" id="tools">
+  <div class="teaser">
+    <div><div class="num">02 — Tools</div><div class="lbl">working vocabulary</div></div>
+    <div>
+      <h2>Tools I'm most <em>experienced</em> with.</h2>
+      <p>After the curve resolves and the strategy screen has shown, the pin releases and the site scrolls normally from here.</p>
+    </div>
+  </div>
+</section>
+
+<div class="demo-badge">Demo · scroll slowly</div>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+(function(){
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* real MOM_BROAD backtest equity, 2016–2026 (from road.js) */
+  const DATA=[9999.98,10740.21,11134.9,11701.4,11896.81,11640.97,11095.81,11224.88,11076,11243.07,11687.9,12079.05,12441.54,12750.36,13045.34,12497.7,12316.04,13080.31,13348.69,14425.75,14537.71,14604.05,15335.72,14212.29,14972.4,15453.22,15863.96,14871.53,15214.3,15814.14,14947.19,15395.57,15375.39,15665.73,15849.47,15810.65,14746.36,15222.58,14899.97,15175.87,16006.19,15819.14,15307.04,14344.4,14080.93,13171.82,13294.62,12758.67,12839.02,13351.98,13952.97,14165.54,14184.08,15130.32,15709.41,15776.08,15308.08,15294.16,16514.54,16729.44,16937.26,15993.63,16497.47,16832.75,15377.23,15305.57,16922.09,17452.63,18449.19,19375.36,20230.57,20698.83,20462.26,22249.62,22221.16,22221.16,22221.16,22221.16,22221.16,22221.16,22221.16,22221.16,22221.16,22221.16,22221.16,22221.16,22221.16,22221.16,22221.16,22221.16,22221.16,22221.16,22221.16,22221.16,22221.16,22221.16,22578.19,21843.26,20732.03,21316.96,21031.95,22277.62,21583.03,22695.11,23495.89,23274.48,22431.08,24488.59,24710.21,22856.79,23564.29,24501.76,26034.03,26070.31,26276.21,25473.13,26164.87,24101.71,24101.71,24291.34,24291.34,24291.34,22306.51,22702.2,22702.2,22702.2,22702.2,22702.2,22702.2,22702.2,23769.09,25574.03,25574.03,25574.03,25574.03,25574.03,25574.03,24113.86,23180.56,22858.8,22977.91,22360.27,22333.21,22271.75,22078.12,22725.72,23035.83,24754.97,26419.36,28343.47,29558.99,31756,31087.44,28350.98,30667.69,28813.57,29401.55,28850.13,31397.13,33668.56,34659.73,38058.26,38500.58,39473.56,46028.89,48737.87,54982.67,56159.68,50636.29,53581.11,58095.99,59634.95,61426.83,60571.2,63524.02,56892.26,60363.37,52462.93,64777.09,68636.58,70072.65,70181.19,72859.29,68937.14,68670.33,67124.57,70886.36,82663.7,74771.43,74329.32,73793.03,73793.03,73793.03,76878.07,80622.54,80426.15,84154.03,85292.46,93479.1,94332.13,98265.23,102329.13,102950.57,110676.23,100028.14,104577.59,107404.54,108247.72,116945.16,127997.66,141673.5,135923.28,135923.28,135923.28,146158.26,156379.55,160033.36,153444.24,161407.14,155505.21];
+
+  const N=DATA.length, L=48, R=616, T=40, B=292, LO=0, HI=200000;
+  const X=i=>L+(i/(N-1))*(R-L);
+  const Y=v=>B-((v-LO)/(HI-LO))*(B-T);
+  const seg=DATA.map((v,i)=>`${X(i).toFixed(1)},${Y(v).toFixed(1)}`);
+  const pts=seg.join(' ');
+  const fillD=`M${X(0).toFixed(1)},${B} L${seg.join(' L')} L${X(N-1).toFixed(1)},${B} Z`;
+
+  const curve=document.querySelector('.eq-curve');
+  const glow =document.querySelector('.eq-glow');
+  const fill =document.querySelector('.eq-fill');
+  const tip  =document.querySelector('.eq-tip');
+  const dot  =document.querySelector('.eq-dot');
+  const ring =document.querySelector('.eq-ring');
+
+  curve.setAttribute('points',pts);
+  glow.setAttribute('points',pts);
+  fill.setAttribute('d',fillD);
+  const lx=X(N-1), ly=Y(DATA[N-1]);
+  [dot,ring].forEach(el=>{el.setAttribute('cx',lx);el.setAttribute('cy',ly);});
+
+  const len=curve.getTotalLength();
+
+  if(reduce || !window.ScrollTrigger){
+    gsap.set([curve,glow],{strokeDasharray:len,strokeDashoffset:0});
+    gsap.set(fill,{opacity:1}); gsap.set('.chart-col',{opacity:1});
+    gsap.set(dot,{opacity:1}); gsap.set('.end',{opacity:1}); gsap.set('.intro',{opacity:0});
+    return;
+  }
+
+  const mob   = () => matchMedia('(max-width:900px)').matches;
+  const dockX = () => mob() ? 0 : -window.innerWidth * 0.235;
+  const dockS = () => mob() ? 0.96 : 0.84;
+
+  gsap.set([curve,glow],{strokeDasharray:len, strokeDashoffset:len});
+
+  const tl = gsap.timeline({
+    scrollTrigger:{ trigger:'.bridge', start:'top top', end:'+=220%', scrub:.5, pin:'.stage', anticipatePin:1 }
+  });
+
+  // 1 · name docks left, chart appears
+  tl.to('.intro', {x:dockX, scale:dockS, transformOrigin:'center', duration:.55, ease:'power2.inOut'}, 0.0);
+  tl.to('.chart-col', {opacity:1, duration:.4}, 0.25);
+
+  // 2 · the real curve draws — glowing tip rides the line
+  tl.to([curve,glow], {strokeDashoffset:0, ease:'none', duration:1.15,
+    onUpdate:function(){
+      const off = gsap.getProperty(curve,'strokeDashoffset');
+      const drawn = Math.max(0, Math.min(len, len-off));
+      if(drawn>1 && drawn<len-1){
+        const p = curve.getPointAtLength(drawn);
+        tip.setAttribute('cx',p.x); tip.setAttribute('cy',p.y); tip.style.opacity=1;
+      } else { tip.style.opacity=0; }
+    }}, 0.6);
+  tl.to(fill, {opacity:1, ease:'none', duration:1.0}, 0.7);
+  tl.to(dot, {opacity:1, duration:.2}, 1.7);
+
+  // 3 · hero clears, strategy + table rise in
+  tl.to('.intro', {opacity:0, y:-28, duration:.4, ease:'power2.in'}, 1.55);
+  tl.fromTo('.end', {y:30}, {opacity:1, y:0, duration:.5, ease:'power2.out'}, 1.7);
+
+  // resting end-marker pulse
+  gsap.timeline({repeat:-1, repeatDelay:.7, delay:1})
+      .fromTo(ring, {scale:.6, opacity:.6}, {scale:3, opacity:0, duration:1.5, ease:'power2.out'});
+
+  // first-paint entrance for the centered hero
+  gsap.from('.nav > *', {y:-16, opacity:0, duration:.9, stagger:.08, ease:'power3.out', delay:.1});
+  gsap.from('.intro > *', {y:20, opacity:0, duration:1.05, stagger:.1, ease:'power3.out', delay:.35});
+})();
+</script>
+
+</body>
+</html>
