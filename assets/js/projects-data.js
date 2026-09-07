@@ -8,7 +8,7 @@
    name and it will appear automatically, no HTML edits needed.
    ══════════════════════════════════════════════════════════════ */
 
-const CAT_LABEL = { ml: 'Machine Learning', quant: 'Quant', infra: 'Infra · Platform', research: 'Research', side: 'Side' };
+const CAT_LABEL = { ml: 'Machine Learning', quant: 'Quant', infra: 'Infra ∙ Platform', research: 'Research', side: 'Side' };
 
 const PROJECTS = [
 
@@ -20,9 +20,9 @@ const PROJECTS = [
     cat: 'quant',
     title: 'SwingLab',
     em: 'and MOM_BROAD',
-    role: 'Solo · Live',
+    role: 'Solo ∙ Live',
     type: 'Quant research platform',
-    tags: ['FastAPI', 'React', 'SQLite'],
+    tags: ['Python', 'FastAPI', 'React', 'SQLite'],
     blurb: 'A full research platform, backtester, and monitor, currently trading real capital through a weekly momentum strategy.',
     featured: true,
     viz: 'equity',
@@ -41,7 +41,7 @@ const PROJECTS = [
     ],
     exhibits: [
       { img: 'equity-curve.png', caption: 'FIG. 01. MOM_BROAD equity curve and drawdown, with VIX out-of-market periods shaded.' },
-      { img: 'platform-ui.png', src: 'swinglab/images/platform_ui.png', caption: 'FIG. 02. SwingLab live: ticker explorer, macro gates, and the live signal feed.' },
+      { img: 'platform-ui.png', src: 'swinglab/images/platform_ui.png', placeholder: true,   /* TODO: add the file, then drop this flag */ caption: 'FIG. 02. SwingLab live: ticker explorer, macro gates, and the live signal feed.' },
     ],
   },
 
@@ -53,13 +53,13 @@ const PROJECTS = [
     cat: 'ml',
     title: 'Cross-sectional',
     em: 'GNN strategy',
-    role: 'Solo · Thesis',
+    role: 'Solo ∙ Thesis',
     type: 'Applied research',
-    tags: ['PyTorch', 'PyTorch Geometric', 'Fractional diff'],
+    tags: ['Python', 'PyTorch', 'PyTorch Geometric', 'pandas'],
     blurb: 'Does modeling stocks as a graph beat a simple trend baseline? Tested with 83 quarters of walk-forward validation.',
     featured: true,
     viz: 'graph',
-    capText: 'correlation graph · IC 0.051',
+    capText: 'correlation graph ∙ IC 0.051',
     stats: [
       { num: '0.051', label: 'Information coefficient' },
       { num: '1.33', label: 'Sharpe' },
@@ -85,13 +85,13 @@ const PROJECTS = [
     cat: 'infra',
     title: 'Sentify',
     em: 'emotion pipeline',
-    role: 'Team · Client',
+    role: 'Team ∙ Client',
     type: 'MLOps',
-    tags: ['FastAPI', 'Airflow', 'MLflow'],
+    tags: ['FastAPI', 'React', 'Airflow', 'MLflow', 'Docker', 'Postgres'],
     blurb: 'A media client\u2019s emotion classifier, served on-prem and retrained automatically on real user feedback.',
     featured: true,
     viz: 'waveform',
-    capText: '7 classes · retrain loop',
+    capText: '7 classes ∙ retrain loop',
     stats: [
       { num: '0.84', label: 'Macro F1' },
       { num: '7', label: 'Emotion classes' },
@@ -109,36 +109,38 @@ const PROJECTS = [
     ],
   },
 
-  /* ── 4. money_dashboard ───────────────────────────────────── */
+  /* ── 4. volatility_dashboard ──────────────────────────────── */
   {
-    id: 'money-dashboard',
+    id: 'volatility-dashboard',
     n: '04',
     year: '2026',
     cat: 'infra',
-    title: 'money_dashboard',
+    title: 'volatility_dashboard',
     em: 'regime cockpit',
     role: 'Solo',
     type: 'Live monitoring tool',
-    tags: ['Python', 'yfinance', 'Streamlit'],
-    blurb: 'A live market cockpit built to catch regime and trend shifts during the day, honest about its own data limits.',
+    tags: ['FastAPI', 'React', 'yfinance', 'SQLite', 'Plotly'],
+    blurb: 'The screen I keep open while the market runs: breadth, rotation, the vol complex, weekly positioning and per-name research.',
     featured: true,
     viz: 'candles',
     capText: '~15min delay, always labeled',
     stats: [
-      { num: '6', label: 'Pages' },
-      { num: '90s', label: 'Auto-refresh' },
+      { num: '10', label: 'Pages' },
+      { num: 'Daily', label: 'What I actually read it on' },
       { num: '~15min', label: 'Data delay, always labeled' },
     ],
     status: 'Live, daily use',
     copy: [
-      "Backtests and strategy code don't tell you what the market is doing today. money_dashboard exists to answer one question all day long: what's actually happening right now, and is the regime shifting under my feet, breadth thinning under a rally, volatility turning, a sector rotation starting. It's a monitoring cockpit, not a backtester and not an execution tool, on purpose, and deliberately separate from SwingLab.",
-      "Built entirely on yfinance: no paid feed, no order flow, no true real-time data. Rather than pretend otherwise, the whole dashboard is built around that limit. Every panel is labeled with exactly how fresh its data is, and buy-versus-sell pressure is estimated with professional proxies (TRIN, up/down volume, breadth) instead of faking tape data that doesn't exist. A session clock tracks market phase (overnight, EU only, overlap, US only), and every page keys off it, showing last close by default and flipping to live intraday only once its relevant market opens.",
-      "Six pages cover the day: Overview (sector heatmap, breadth, TRIN, refreshing every 90 seconds off one bulk snapshot across roughly 500 names), Cross-Asset (rotation ratios, badged DAILY where rotation is genuinely a multi-week signal), Macro & Regime (SPY against a composite score, FRED rates, deliberately end-of-day since these signals are supposed to be slow), Volatility (VIX term structure, VVIX, SKEW, DSPX dispersion, degrading gracefully when Yahoo doesn't serve a ticker), Europe (a 09:00 CET view with an overlap panel for the US open), and a TradingView-style Ticker view with regime overlays.",
+      "Backtests don't tell you what the market is doing today. This answers one question all day long: what is actually happening right now, and is the regime shifting under my feet. Breadth thinning under a rally, volatility turning, a rotation starting. A monitoring cockpit, not a backtester, and deliberately separate from SwingLab.",
+      "Mostly it is how I learn the market. I read it every morning and through the session, form a view of what kind of day it is, then talk the odd parts through with Claude: why credit is widening while equities hold, why the vol curve is backwardated on a green day. Having the numbers in front of me while I ask means the answer lands on something concrete, and a year of that has given me a far clearer picture of how the pieces fit together than commentary ever did.",
+      "Ten pages cover the day. Breadth and a sector heatmap across 500 names. A Relative Rotation Graph measured against SPY, so the crosshair is the benchmark and every name sits in leading, weakening, lagging or improving. Macro scored off FRED real yields and breakevens. Commodities built around roll yield and ratios with five-year percentiles. Volatility where every gauge carries its one-year percentile, because VIX 18 is calm in 2022 and a warning in 2017. And Positioning, the weekly half: CFTC net positioning for asset managers, leveraged funds and dealers, each with three years of history and a percentile, plus the NAAIM survey of how much equity risk active managers actually carry.",
+      "The Ticker page is where a trade gets checked before I take it. Full price history on TradingView's lightweight-charts, with revenue and net income overlaid on price, earnings and the last EPS surprise, analyst consensus and targets, short interest, headlines, and the option surface: IV rank, put/call, skew and an approximate gamma exposure.",
+      "It runs entirely on yfinance, so there is no paid feed and no order flow. Every panel says how fresh its data is, pressure is estimated with proxies like TRIN and up/down volume rather than faked from tape that doesn't exist, and anything the feed won't serve is shown as unavailable instead of invented.",
     ],
     exhibits: [
-      { img: 'overview.png', src: 'money-dashboard/images/overview.png', caption: 'FIG. 01. Overview: sector heatmap, breadth, and top gainers/losers.' },
-      { img: 'volatility.png', src: 'money-dashboard/images/volatility.png', caption: 'FIG. 02. Volatility desk: VIX term structure, VVIX, SKEW, and DSPX dispersion.' },
-      { img: 'macro-regime.png', src: 'money-dashboard/images/macro_regime.png', caption: 'FIG. 03. Macro & Regime: SPY vs. composite score with 7 risk signals.' },
+      { img: 'cross-asset-rrg.png', caption: 'FIG. 01. Cross-Asset: the Relative Rotation Graph against SPY, with the rolling correlation matrix beside it.' },
+      { img: 'ticker-research.png', caption: 'FIG. 02. Ticker: full price history, with analyst consensus, earnings, short interest and options signals on the rail.' },
+      { img: 'commodities.png', caption: 'FIG. 03. Commodities: the board, roll yield as ETF over front contract, and gold against the 10-year real yield.' },
     ],
   },
 
@@ -150,9 +152,9 @@ const PROJECTS = [
     cat: 'research',
     title: 'VTSZ customs',
     em: 'classifier',
-    role: 'Client · Solo',
+    role: 'Client ∙ Solo',
     type: 'Applied vision-language',
-    tags: ['Qwen2.5-VL', 'Ollama', 'Streamlit'],
+    tags: ['Python', 'Qwen2.5-VL', 'Ollama', 'Streamlit'],
     blurb: 'A local vision-language model replaces a manual Excel and PDF customs-classification workflow.',
     featured: false,
     stats: [
@@ -177,13 +179,13 @@ const PROJECTS = [
     cat: 'quant',
     title: 'IMC Prosperity 4',
     em: 'solo entry',
-    role: 'Solo · Competition',
+    role: 'Solo ∙ Competition',
     type: 'Algorithmic trading',
-    tags: ['Python', 'Options', 'Game theory'],
+    tags: ['Python', 'NumPy', 'pandas'],
     blurb: 'A global trading competition, 223rd of 18,800 teams solo, 1st in the Netherlands on the manual round.',
     featured: true,
     viz: 'smile',
-    capText: 'voucher IV smile · #223 of 18,800',
+    capText: 'voucher IV smile ∙ #223 of 18,800',
     stats: [
       { num: '223rd', label: 'of 18,800 teams' },
       { num: '7th', label: 'Netherlands, overall' },
@@ -209,8 +211,8 @@ const PROJECTS = [
     title: 'NPEC',
     em: 'root pred + robot arm',
     role: 'Research collab',
-    type: 'Computer vision · Robotics',
-    tags: ['PyTorch', 'U-Net', 'Dijkstra', 'SAC/PPO'],
+    type: 'Computer vision ∙ Robotics',
+    tags: ['Python', 'PyTorch', 'U-Net', 'Dijkstra', 'SAC/PPO'],
     blurb: 'A U-Net root segmentation pipeline feeding a Dijkstra length measurement, then an RL-controlled robot arm for automated inoculation.',
     featured: true,
     viz: 'roots',
@@ -242,7 +244,7 @@ const PROJECTS = [
     em: 'WasteWarrior',
     role: 'Solo',
     type: 'Applied computer vision',
-    tags: ['TensorFlow', 'Flask', 'MobileNet', 'GCP'],
+    tags: ['Python', 'TensorFlow', 'Flask', 'SQLite', 'GCP'],
     blurb: 'Sorting trash with 97.7% accuracy, wrapped in a full deployed app, not just a notebook model.',
     featured: false,
     stats: [
@@ -269,8 +271,8 @@ const PROJECTS = [
     cat: 'side',
     title: 'DeckDoctor',
     em: 'hackathon build',
-    role: 'Solo · Hackathon',
-    type: 'Applied ML · Side',
+    role: 'Solo ∙ Hackathon',
+    type: 'Applied ML ∙ Side',
     tags: ['React', 'FastAPI', 'GPT', 'ElevenLabs'],
     blurb: 'A Clash Royale deck analyzer built at Supercell\u2019s hackathon, with a spoken analysis.',
     featured: false,
@@ -298,7 +300,7 @@ const PROJECTS = [
     em: 'OCR + LLM',
     role: 'Solo',
     type: 'Applied ML pipeline',
-    tags: ['Tesseract', 'Llama'],
+    tags: ['Python', 'Tesseract', 'Llama'],
     blurb: 'Turning messy scanned receipts into clean structured data, no manual retyping.',
     featured: false,
     stats: [
@@ -343,6 +345,25 @@ const PROJECTS = [
     exhibits: [],
   },
 ];
+
+/* ── Longer write-ups on GitHub ────────────────────────────────
+   The bigger projects each have their own folder in the GitHub portfolio repo
+   with a fuller README and the figures that go with it. Mapped here rather
+   than as a field on each project, because the folder names came first and
+   only some of them match the ids used on this site: the dashboard's folder is
+   still `money-dashboard`, and `GNN project` has a space in it, which has to
+   arrive percent-encoded or GitHub 404s. Projects with no folder simply get no
+   link, `repo` stays undefined and the template skips it. */
+const REPO_BASE = 'https://github.com/honyakgergo/Portfolio/tree/main/';
+const REPO_FOLDER = {
+  'swinglab':              'swinglab',
+  'gnn':                   'GNN%20project',
+  'sentify':               'sentify-emotion-pipeline',
+  'volatility-dashboard':  'money-dashboard',
+  'npec':                  'npec-root-analysis',
+  'waste-classifier':      'waste-warrior',
+};
+PROJECTS.forEach(p => { if (REPO_FOLDER[p.id]) p.repo = REPO_BASE + REPO_FOLDER[p.id]; });
 
 /* Convenience lookups used across pages */
 const PROJECTS_BY_ID = Object.fromEntries(PROJECTS.map(p => [p.id, p]));

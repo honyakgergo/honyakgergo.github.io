@@ -1,11 +1,20 @@
 /* ══════════════════════════════════════════════════════════════
-   Equity-road hero — additive styles for live/index.html only.
-   Loaded after site.css; reuses the site's tokens (--paper, --ink,
-   --blue, --mono, --serif, --rule, --rule-soft).
+   Equity hero, the one loud moment on the site.
+
+   A rim-lit cut-out of the person sits centre stage; his name is set
+   across his chest; the equity curve draws itself over him on the
+   first scroll while he dissolves into it. Everything else on the
+   page is deliberately quiet so this can be the thing you remember.
+
+   Layer order inside .ehero-sticky:
+     1 .ehero-figure   the portrait and the light rig around it
+     2 .ehero-scrim    grounds the figure, guarantees text contrast
+     3 #eroad          the canvas the curve draws on (over the figure,
+                       so the curve crosses the silhouette)
+     4 .ehero-ui       type
 
    The stage is position:fixed (not sticky) because the site sets
-   overflow-x:hidden on html/body, which disables position:sticky.
-   road.js shows/hides the stage as the hero section scrolls by.
+   overflow-x on html/body, which disables position:sticky.
    ══════════════════════════════════════════════════════════════ */
 
 .ehero { position: relative; height: 100vh; background: var(--paper); }
@@ -13,78 +22,241 @@
 /* everything after the hero sits above the fixed stage and wipes over it on exit */
 .ehero-after { position: relative; z-index: 2; background: var(--paper); }
 
-/* fixed stage: fills the viewport while the hero section owns it (behind .ehero-after) */
 .ehero-sticky {
   position: fixed; inset: 0; height: 100vh; overflow: hidden;
   z-index: 1; pointer-events: none; background: var(--paper);
 }
-#eroad { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.ehero-ui { position: absolute; inset: 0; pointer-events: none; }
 
-/* ── intro (left column, vertically centred) ─────────────── */
+/* ── the figure: a four-layer light rig around one cut-out ────
+   The portrait is a real photograph, cut out and graded in Photoshop, and
+   the source PNG lives in the repo untouched. Everything that makes this
+   read as a lit, low-key scene is built here in CSS, over the photo, so
+   any part of it can be dialled back or dropped on its own:
+
+     .ehero-bloom     blue light BEHIND him, core, body, and a wide wash
+     .ehero-portrait  the photograph, placed as supplied
+     .ehero-relight   cool light ON him, spilling round from the bloom
+     .ehero-sink      paper-coloured falloff ON him: it pulls his crown and
+                      shoulders down into shadow so his face is the one lit
+                      thing, and melts his chest into the page rather than
+                      ending it at the crop edge
+
+   The last two are masked with the portrait's own alpha channel, which
+   is why they land on him and never spill onto the stage.
+   ───────────────────────────────────────────────────────────── */
+.ehero-figure {
+  position: absolute; left: 50%; top: 0; transform: translateX(-50%);
+  width: min(70vh, 92vw); aspect-ratio: 600 / 750;
+  z-index: 1; will-change: opacity, transform, filter;
+}
+/* two nested layers so the page-load entrance (GSAP, on .ehero-figure-in)
+   and the scroll-driven dissolve (road-launch.js, on .ehero-figure)
+   never fight over the same style properties.
+   isolation keeps the relight's screen blend inside the figure, without
+   it the blend reaches the stage behind and the bloom washes out. */
+.ehero-figure-in { position: absolute; inset: 0; isolation: isolate; }
+
+.ehero-portrait {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  display: block; z-index: 1;
+  /* no grade: the source PNG arrives already graded and cut out, so the
+     mood here is made entirely by the light layers around it */
+}
+
+/* the light behind him, a broad, soft bloom, not a ring.
+   Each ellipse gets a long ramp of stops rather than two: a straight fade to
+   zero over this much distance quantises in 8-bit and the last visible step
+   reads as a hard ring on a near-black page. */
+.ehero-bloom {
+  position: absolute; inset: -26% -62% 0%; z-index: 0;
+  background:
+    /* the core, right behind his head */
+    radial-gradient(closest-side,
+      rgba(91, 147, 255, 0.52),
+      rgba(91, 147, 255, 0.27) 42%,
+      rgba(91, 147, 255, 0.11) 64%,
+      rgba(91, 147, 255, 0.035) 82%,
+      rgba(91, 147, 255, 0)) 50% 34% / 46% 48% no-repeat,
+    /* the body of the glow, out past his shoulders */
+    radial-gradient(closest-side,
+      rgba(91, 147, 255, 0.22),
+      rgba(91, 147, 255, 0.115) 40%,
+      rgba(91, 147, 255, 0.048) 62%,
+      rgba(91, 147, 255, 0.014) 80%,
+      rgba(91, 147, 255, 0)) 50% 39% / 86% 84% no-repeat,
+    /* and a wash that carries the light out to the edges of the stage, so
+       the hero reads as a lit room rather than a lit cut-out */
+    radial-gradient(closest-side,
+      rgba(91, 147, 255, 0.095),
+      rgba(91, 147, 255, 0.05) 42%,
+      rgba(91, 147, 255, 0.02) 64%,
+      rgba(91, 147, 255, 0.006) 82%,
+      rgba(91, 147, 255, 0)) 50% 45% / 100% 100% no-repeat;
+  /* no blur here: with ramps this long it makes no measurable difference to
+     the falloff, and it would be a second blur pass inside the one the
+     scroll dissolve already applies to the whole figure */
+}
+
+.ehero-relight, .ehero-sink {
+  position: absolute; inset: 0; pointer-events: none;
+  -webkit-mask-image: url(../images/me_image/hero_portrait.webp);
+          mask-image: url(../images/me_image/hero_portrait.webp);
+  -webkit-mask-size: 100% 100%;  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+}
+/* soft-light, not screen: screen lifts mid-tones hardest, which turned his
+   hair grey. soft-light cools the lit side and leaves the darks alone.
+   Both lobes sit over the head and the near shoulder, in this crop his head
+   spans only ~31%–69% of the width, so a lobe further out would be masked
+   away and do nothing. */
+.ehero-relight {
+  z-index: 2; mix-blend-mode: soft-light; opacity: 0.72;
+  background:
+    radial-gradient(46% 34% at 64% 22%, rgba(150, 190, 255, 0.70), rgba(150, 190, 255, 0) 78%),
+    radial-gradient(38% 28% at 34% 30%, rgba(120, 164, 255, 0.32), rgba(120, 164, 255, 0) 80%);
+}
+.ehero-sink {
+  z-index: 3;
+  background:
+    /* falloff away from the face, so the crown goes quietly to shadow */
+    radial-gradient(56% 42% at 49% 33%, rgba(7, 8, 10, 0) 30%, rgba(7, 8, 10, 0.34) 100%),
+    /* and the vertical sink into the page. His chin sits at ~50% of this crop
+       and his shoulders fill everything below ~60%, so the sink starts late
+       and stays gentle through them, it only takes hold near the crop edge. */
+    linear-gradient(180deg,
+      rgba(7, 8, 10, 0) 74%,
+      rgba(7, 8, 10, 0.20) 85%,
+      rgba(7, 8, 10, 0.74) 94%,
+      rgba(7, 8, 10, 1) 99.5%); /* fully opaque before the crop edge, or the
+                                   bottom of the photo shows as a straight
+                                   cut wherever the figure box is short */
+}
+
+/* ── scrim: seats the figure in the page and buys the type its contrast ── */
+.ehero-scrim {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background:
+    radial-gradient(128% 66% at 50% 104%, rgba(7, 8, 10, 0.90), rgba(7, 8, 10, 0) 68%),
+    linear-gradient(180deg, rgba(7, 8, 10, 0.62) 0%, rgba(7, 8, 10, 0) 20%),
+    radial-gradient(112% 86% at 50% 38%, rgba(7, 8, 10, 0) 44%, rgba(7, 8, 10, 0.60) 100%);
+}
+/* Dither. A bloom this wide fades over hundreds of pixels, and at 8 bits per
+   channel that shallow a ramp quantises into visible concentric bands on a
+   near-black page. A pixel or two of noise over the whole stage breaks the
+   bands up; it is far too faint to read as texture, and it does the photo a
+   favour on the way past. */
+.ehero-scrim::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+#eroad { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 3; }
+.ehero-ui { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+
+/* ── intro type, set low so more of his shoulders read ─── */
 .ehero-intro {
-  position: absolute; top: clamp(92px, 14vh, 165px); left: 50%; transform: translateX(-50%);
-  width: min(780px, 90vw); text-align: center;
+  position: absolute; left: 50%; bottom: clamp(24px, 4vh, 52px);
+  transform: translateX(-50%);
+  width: min(1060px, 92vw); text-align: center;
 }
-.ehero-intro .kick {
-  font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em;
-  text-transform: uppercase; color: var(--ink-mute); margin-bottom: 20px;
-}
+
 .ehero-name {
-  font-family: var(--serif); font-weight: 300; line-height: 1.0;
-  letter-spacing: -0.025em; color: var(--ink); white-space: nowrap;
-  font-size: clamp(44px, 7vw, 118px); margin: 0;
+  position: relative;                /* the ink layer registers against this */
+  font-weight: 800; line-height: 0.94;
+  letter-spacing: -0.042em; color: var(--ink); white-space: nowrap;
+  font-size: clamp(48px, 9vw, 142px); margin: 0;
+  text-shadow: 0 4px 46px rgba(7, 8, 10, 0.72);
+  pointer-events: auto;              /* .ehero-ui is inert; the name is not */
+}
+
+/* Ink in water. A second copy of the name in blue, sitting exactly on the
+   white one and revealed only through a mask that JS builds from the last
+   few cursor positions. Each drop blooms outward and fades as it ages, so a
+   swipe leaves a diffusing stroke of colour through the letters rather than a
+   spotlight follow. The copy is aria-hidden, the h1 is read once.
+   Registration is free: same string, same inherited font, same centred line
+   box, so it cannot drift out of alignment with the text underneath. */
+.nm-ink {
+  position: absolute; left: 0; right: 0; top: 0;
+  color: var(--blue); pointer-events: none;
+  -webkit-user-select: none; user-select: none;   /* don't copy the name twice */
+  text-shadow: 0 0 24px rgba(91, 147, 255, 0.55), 0 0 64px rgba(91, 147, 255, 0.32);
+  /* an empty mask: nothing shows until the pointer arrives */
+  -webkit-mask-image: radial-gradient(circle 0px at 50% 50%, #000, transparent);
+          mask-image: radial-gradient(circle 0px at 50% 50%, #000, transparent);
 }
 .ehero-roles {
-  margin-top: 14px; font-family: var(--serif); font-style: italic; font-weight: 300;
-  font-size: clamp(19px, 2.4vw, 34px); line-height: 1.2; color: var(--ink-2); letter-spacing: -0.01em;
+  margin-top: clamp(6px, 1.2vh, 14px);
+  font-weight: 500;
+  font-size: clamp(18px, 2.2vw, 32px); line-height: 1.25;
+  color: var(--ink-2); letter-spacing: 0;
+  text-shadow: 0 2px 26px rgba(7, 8, 10, 0.7);
 }
-.ehero-roles em { font-style: italic; color: var(--blue); }
+/* the emphasis is the half of him this whole page is about, it's the
+   thread you follow into the scroll, not decoration */
+.ehero-roles em { color: var(--blue); }
+.ehero-roles .sep { color: var(--ink-faint); font-style: normal; margin: 0 0.32em; }
 .ehero-tag {
-  margin: 24px auto 0; max-width: 52ch; font-weight: 300;
-  font-size: clamp(15px, 1.3vw, 19px); line-height: 1.55; color: var(--ink-2);
+  margin: clamp(14px, 2.2vh, 24px) auto 0; max-width: 36em;
+  font-size: clamp(14.5px, 1.1vw, 17px); line-height: 1.62; color: var(--ink-2);
+  text-shadow: 0 1px 18px rgba(7, 8, 10, 0.8);
 }
-.ehero-tag em { font-style: italic; color: var(--blue); }
-.ehero-hint {
-  margin-top: 30px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em;
-  text-transform: uppercase; color: var(--ink-mute); display: flex; align-items: center;
-  justify-content: center; gap: 12px;
-}
-.ehero-hint .bar { width: 46px; height: 1px; background: linear-gradient(90deg, transparent, var(--ink-faint), transparent); }
+.ehero-tag em { font-weight: 500; color: var(--blue); }
 
-/* ── end panel (left column; the plot renders on the canvas, right) ─── */
+/* ── end panel: the story, and the numbers that back it ─── */
 .ehero-end {
   position: absolute; left: clamp(20px, 5vw, 80px); top: 50%;
   transform: translateY(-50%); max-width: min(540px, 44vw); opacity: 0;
 }
+/* not a flex row: the mono code and the clause after it are one sentence, and
+   as flex items the `gap` opened a hole in front of the comma */
 .ehero-end .kick {
-  font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--blue); margin-bottom: 18px;
+  font-size: 13px; font-weight: 500; color: var(--blue); margin-bottom: 18px;
 }
 .ehero-endtitle {
-  font-family: var(--serif); font-weight: 300; line-height: 1.02;
-  font-size: clamp(30px, 3.6vw, 54px); letter-spacing: -0.02em; color: var(--ink); margin: 0;
+  font-weight: 700; line-height: 1.05;
+  font-size: clamp(27px, 3.1vw, 46px); letter-spacing: -0.032em; color: var(--ink); margin: 0;
 }
 .ehero-endbody {
-  margin-top: 20px; max-width: 46ch; font-weight: 300;
-  font-size: clamp(15px, 1.2vw, 18px); line-height: 1.6; color: var(--ink-2);
+  margin-top: 20px; max-width: 33em;
+  font-size: clamp(14.5px, 1.05vw, 16.5px); line-height: 1.66; color: var(--ink-2);
 }
-.ehero-endbody em { font-style: italic; color: var(--blue); }
+.ehero-endbody em { font-weight: 500; color: var(--blue); }
 .ehero-path { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 8px; }
 .ehero-path span {
-  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--ink-mute); border: 1px solid var(--rule); border-radius: 999px; padding: 5px 11px;
+  font-size: 12.5px; color: var(--ink-mute);
+  border: 1px solid var(--rule); border-radius: 999px; padding: 5px 11px;
 }
-.ehero-stats { margin-top: 26px; font-family: var(--mono); font-size: 12.5px; border-top: 1px solid var(--rule); }
+
+.ehero-stats {
+  margin-top: 26px; font-family: var(--mono); font-size: 13px;
+  font-variant-numeric: tabular-nums; border-top: 1px solid var(--rule);
+}
 .ehero-stats .es-row {
   display: grid; grid-template-columns: 1.4fr 0.8fr 0.8fr; gap: 10px;
-  padding: 9px 0; border-bottom: 1px solid var(--rule-soft);
+  padding: 10px 0; border-bottom: 1px solid var(--rule-soft);
 }
-.ehero-stats .es-row span:nth-child(1) { color: var(--ink-mute); }
+.ehero-stats .es-row span:nth-child(1) { font-family: var(--sans); color: var(--ink-mute); }
 .ehero-stats .es-row span:nth-child(2),
 .ehero-stats .es-row span:nth-child(3) { text-align: right; color: var(--ink); }
-.ehero-stats .es-head span { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint) !important; }
+.ehero-stats .es-head span { font-family: var(--sans); font-size: 12px; color: var(--ink-faint) !important; }
 .ehero-stats .es-row span.up { color: var(--blue); }
+
+/* Where the narrative paragraph cannot go, a line that points at it. Off on a
+   wide screen, .ehero-endbody is right there saying it properly, and turned
+   on by the narrow blocks that hide the paragraph, so the phone never leaves
+   the reader with numbers and no way through to the story behind them.
+   Tappability is handed back in road-launch.js rather than here: .ehero-ui is
+   pointer-events:none, and the panel spends the whole hero ride at opacity 0,
+   so enabling it in CSS would put an invisible tap target over the portrait. */
+.ehero-more {
+  display: none; align-items: center; gap: 8px; margin-top: 16px;
+  font-size: 13.5px; font-weight: 500; color: var(--ink); text-decoration: none;
+  border-bottom: 1px solid var(--blue); padding-bottom: 3px;
+}
+.ehero-more .arw { color: var(--blue); }
 
 /* ── About: portrait photo fills the tilted frame ────────── */
 .about-photo .about-portrait { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
@@ -92,22 +264,88 @@
 .about-photo .ph-text span { color: rgba(255, 255, 255, 0.92); text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5); }
 
 @media (max-width: 820px) {
-  .ehero { height: 100vh; }
-  .ehero-intro { top: 50%; transform: translate(-50%, -50%); width: 92vw; }
-  .ehero-name { font-size: clamp(38px, 11vw, 62px); white-space: normal; }
-  .ehero-roles { font-size: clamp(17px, 4.6vw, 26px); }
-  .ehero-tag { font-size: 15px; max-width: 92vw; }
+  /* The figure is wider than it was: on a phone the stage is nearly square, so
+     a narrow figure left a dead band across the middle of the screen between
+     his shoulders and the type.
 
-  /* end panel: full-width text up top; road.js drops the plot into the lower half */
+     The top offset is solved rather than guessed. The crown of his head sits
+     at 12% of the figure height, which is 15% of its width (the crop is 600 ×
+     750), and the two-row phone bar is 96px tall, so putting the crown a
+     clear 8px below the bar means starting the figure 104px minus that 15%
+     from the top. A fixed offset cannot do this: the figure is width-bound
+     here, so its height, and with it the distance down to his head, changes
+     with every screen size. */
+  .ehero-figure { width: min(64vh, 96vw); top: max(0px, 104px - 0.15 * min(64vh, 96vw)); }
+  .ehero-bloom { inset: -18% -44% 6%; }
+  /* And the type rides up to meet him, the way it sits across his chest on a
+     wide screen, pinned to the bottom edge it was floating alone in the dark
+     with the gap above it. */
+  .ehero-intro { bottom: clamp(56px, 12vh, 132px); width: 92vw; }
+  .ehero-name { font-size: clamp(34px, 11vw, 60px); white-space: normal; }
+  .ehero-roles { font-size: clamp(16px, 4.2vw, 24px); }
+  .ehero-tag { font-size: 14.5px; max-width: 42ch; }
+  .ehero-scrim {
+    background:
+      radial-gradient(150% 60% at 50% 104%, rgba(7, 8, 10, 0.94), rgba(7, 8, 10, 0) 66%),
+      linear-gradient(180deg, rgba(7, 8, 10, 0.6) 0%, rgba(7, 8, 10, 0) 16%),
+      radial-gradient(126% 84% at 50% 36%, rgba(7, 8, 10, 0) 48%, rgba(7, 8, 10, 0.50) 100%);
+  }
+
+  .ehero-endtitle { font-size: clamp(28px, 8vw, 42px); }
+  .ehero-endbody { display: none; }   /* narrative hidden on phones so the plot stays clear */
+  .ehero-path { display: none; }
+  /* the kick gives up 6px so the link below costs the plot almost nothing */
+  .ehero-end .kick { margin-bottom: 12px; }
+  .ehero-stats { margin-top: 20px; font-size: 12.5px; }
+  .ehero-more { display: inline-flex; }
+}
+
+/* A short phone, an SE, or any 4.7" handset, has no spare height to give
+   back: the figure and the three lines of type already add up to more than the
+   stage, so raising the type puts it across his chin. There it sits back down
+   over his chest, the way it does on a wide screen, and the figure comes down
+   a size with it. */
+@media (max-width: 820px) and (max-height: 719px) {
+  .ehero-figure { width: min(56vh, 88vw); top: max(0px, 104px - 0.15 * min(56vh, 88vw)); }
+  .ehero-intro { bottom: clamp(20px, 4.5vh, 40px); }
+}
+
+/* end panel: full-width text up top; road-launch.js drops the plot into the
+   lower half. Only where there is a lower half to drop it into, see the
+   short-viewport block below, which keeps the wide side-by-side split. */
+@media (max-width: 820px) and (min-height: 560px) {
   .ehero-end {
     left: 0; right: 0; top: clamp(74px, 11vh, 106px); transform: none;
     max-width: none; width: auto; padding: 0 22px; text-align: left;
   }
-  .ehero-endtitle { font-size: clamp(28px, 8vw, 42px); }
-  .ehero-endbody { display: none; }   /* narrative hidden on phones so the plot stays clear */
-  .ehero-path { display: none; }
-  .ehero-stats { margin-top: 20px; font-size: 12px; }
 }
+
+/* ── phone held sideways (and any short window) ───────────────
+   ~310px of stage under the bar: not enough for a full-height figure with the
+   type stacked below it, and not enough to put the chart under the end panel.
+   So the figure shrinks to a portrait band, the tag line goes, and the layout
+   falls back to the wide split, end panel left, chart right (road-launch.js
+   makes the same call on the same condition). */
+@media (max-width: 900px) and (max-height: 560px) {
+  .ehero-figure { width: min(64vh, 44vw); top: clamp(6px, 2vh, 20px); }
+  .ehero-intro { bottom: clamp(10px, 3.5vh, 26px); width: 94vw; }
+  .ehero-name { font-size: clamp(28px, 6.4vw, 46px); }
+  .ehero-roles { font-size: clamp(14px, 2.4vw, 19px); margin-top: 4px; }
+  .ehero-tag { display: none; }
+  /* the wide layout keeps the narrative paragraph; there is no room for it in
+     ~390px of height next to a five-row table, so it goes here too */
+  .ehero-end { max-width: min(460px, 46vw); }
+  .ehero-end .kick { margin-bottom: 10px; }
+  .ehero-endtitle { font-size: clamp(22px, 3.4vw, 32px); }
+  .ehero-endbody, .ehero-path { display: none; }
+  .ehero-stats { margin-top: 14px; font-size: 11.5px; }
+  .ehero-stats .es-row { padding: 6px 0; }
+  .ehero-more { display: inline-flex; margin-top: 11px; font-size: 12.5px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ehero { height: 100vh; }
+  /* the ink effect is skipped in JS under reduced motion; hide the layer
+     outright so a stale mask can never leave colour on the name */
+  .nm-ink { display: none; }
 }

@@ -2,13 +2,24 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>Gergő Honyák · Portfolio</title>
+<title>Gergő Honyák · Data science student and momentum trader</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="view-transition" content="same-origin" />
+<meta name="description" content="Gergő Honyák, third-year Applied Data Science &amp; AI student at BUas, building systematic trading strategies. A momentum strategy backtested from 2016, trading live capital since February 2026." />
+<meta name="theme-color" content="#07080a" />
+<link rel="canonical" href="https://honyakgergo.github.io/" />
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Gergő Honyák · Data science student and momentum trader" />
+<meta property="og:description" content="Applied Data Science &amp; AI at BUas. A systematic momentum strategy, backtested from 2016 and trading live capital since February 2026." />
+<meta property="og:image" content="/assets/images/swinglab/equity-curve.png" />
+<meta name="twitter:card" content="summary_large_image" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Geist:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<link rel="preload" as="image" type="image/webp" href="assets/images/me_image/hero_portrait.webp" />
 
 <link rel="stylesheet" href="assets/css/site.css" />
 <link rel="stylesheet" href="assets/css/hero.css" />
@@ -20,41 +31,65 @@
 </head>
 <body>
 
-<nav class="nav">
+<a class="skip-link" href="#feat" id="skipLink">Skip to projects</a>
+
+<nav class="nav nav-home" aria-label="Primary">
   <a href="/" class="brand">Gergő Honyák</a>
   <div class="nav-links">
     <a href="#feat">Work</a>
     <a href="#about">About</a>
     <a href="#contact">Contact</a>
+    <!-- phone only: the standalone Projects pill has nowhere to go on a narrow
+         bar, so it joins the others inside the same box (see site.css) -->
+    <a href="/archive/" class="nav-inline-cta">Projects</a>
   </div>
-  <a href="#" class="nav-cta">CV ↓</a>
+  <a href="/archive/" class="nav-cta">Projects</a>
 </nav>
 
-<!-- ─── EQUITY-ROAD HERO ─────────────────────────────── -->
-<section class="ehero" id="ehero" data-screen-label="01 Hero">
+<main>
+
+<!-- ─── EQUITY HERO ───────────────────────────────────── -->
+<section class="ehero" id="ehero">
   <div class="ehero-sticky" id="eStage">
-    <canvas id="eroad"></canvas>
+
+    <div class="ehero-figure" id="eFigure">
+      <div class="ehero-figure-in" id="eFigureIn">
+        <span class="ehero-bloom" aria-hidden="true"></span>
+        <img class="ehero-portrait" src="assets/images/me_image/hero_portrait.webp"
+             width="1600" height="2000" alt="Gergő Honyák" fetchpriority="high" />
+        <span class="ehero-relight" aria-hidden="true"></span>
+        <span class="ehero-sink" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <div class="ehero-scrim" aria-hidden="true"></div>
+    <canvas id="eroad" aria-hidden="true"></canvas>
+
     <div class="ehero-ui">
 
       <div class="ehero-intro" id="eIntro">
-        <div class="kick">Systematic ML · Quantitative finance</div>
-        <h1 class="ehero-name">Gergő Honyák</h1>
-        <p class="ehero-roles">Data science student · <em>momentum trader</em></p>
-        <p class="ehero-tag">Third-year Applied Data Science &amp; AI at BUas, working at the seam of <em>machine learning</em> and <em>quantitative finance</em>. Scroll to ride my momentum strategy, backtested from 2016 to today and running live capital since January 2026.</p>
-        <div class="ehero-hint" id="eHint"><span class="bar"></span>scroll to ride the curve</div>
+        <h1 class="ehero-name" id="eName">Gergő Honyák<span class="nm-ink" aria-hidden="true">Gergő Honyák</span></h1>
+        <p class="ehero-roles">Data science student<span class="sep">·</span><em>momentum trader</em></p>
+        <p class="ehero-tag">Third-year Applied Data Science &amp; AI at BUas, working where machine learning meets quantitative finance. The curve behind me is my momentum strategy: backtested from 2016, trading live capital since February 2026.</p>
       </div>
 
       <div class="ehero-end" id="eEnd">
-        <div class="kick">MOM_BROAD · live capital since Jan 2026</div>
+        <div class="kick"><span class="mono">MOM_BROAD</span>, live since February 2026</div>
         <h2 class="ehero-endtitle">My largest project.</h2>
-        <p class="ehero-endbody">It started with the momentum literature (Jegadeesh &amp; Titman, Antonacci's dual momentum) and grew into <em>SwingLab</em>, a platform I built to watch market behaviour, run technical analysis, and backtest strategies like this one. Every idea goes through out-of-sample testing, Monte Carlo and bootstrap resampling, with transaction costs and slippage modelled in, before it trades a cent. Since January it's been live with real money, riding the strongest names (mostly chips and semis), and it's up about 72% so far.</p>
+        <p class="ehero-endbody">It started in the momentum literature (Jegadeesh &amp; Titman, Antonacci's dual momentum) and grew into <em>SwingLab</em>, a platform I built to watch market behaviour, run technical analysis and backtest strategies like this one. Nothing trades a cent until it survives out-of-sample testing, Monte Carlo and bootstrap resampling, with transaction costs and slippage modelled in. Since February it has been live with real money, riding the strongest names: mostly chips and semis.</p>
         <div class="ehero-stats">
-          <div class="es-row es-head"><span>Metric</span><span>Backtest</span><span>Live '26</span></div>
-          <div class="es-row"><span>Total return</span><span>+1,645%</span><span class="up">+71.6%</span></div>
-          <div class="es-row"><span>CAGR</span><span>34.2%</span><span>n/a</span></div>
-          <div class="es-row"><span>Sharpe</span><span>1.25</span><span class="up">1.84</span></div>
+          <!-- All eight read off the same daily series the curve is drawn from
+               (equity_curve.csv). Backtest = 2016-12-12 → 2026-09-04, the whole
+               simulated line; Live = 2026-02-02 → 2026-09-04, the real account. -->
+          <div class="es-row es-head"><span>Metric</span><span>Backtest</span><span>Live 2026</span></div>
+          <div class="es-row"><span>Total return</span><span class="up">+1,712%</span><span class="up">+51.8%</span></div>
+          <div class="es-row"><span>CAGR</span><span>34.7%</span><span>n/a</span></div>
+          <div class="es-row"><span>Sharpe</span><span>1.27</span><span>1.59</span></div>
           <div class="es-row"><span>Max drawdown</span><span>−21.2%</span><span>−20.1%</span></div>
         </div>
+        <!-- phone only: stands in for the narrative paragraph, which has no
+             room next to the plot on a narrow stage (see hero.css) -->
+        <a class="ehero-more" href="/project/?id=swinglab">Read more about it <span class="arw" aria-hidden="true">→</span></a>
       </div>
 
     </div>
@@ -63,25 +98,25 @@
 
 <div class="ehero-after">
 
-<!-- ─── SKILL SPIRAL — "working vocabulary" (replaces the flat grid) ── -->
-<section class="vocab" id="vocab" data-screen-label="02 Tools">
+<!-- ─── SKILL SPIRAL, "working vocabulary" ─────────────── -->
+<section class="vocab" id="vocab">
   <div class="vocab-stage" id="vocabStage">
     <div class="vstage"><div class="vhelix" id="vhelix"></div></div>
     <div class="vocab-head">
       <h2>Tools I'm most <em>experienced</em> with.</h2>
-      <p>The ones I reach for most, one at a time. Scroll to spin the stack.</p>
+      <p>The ones I reach for most, one at a time.</p>
     </div>
     <div class="vocab-readout">
       <div class="val" id="vFocusName">Python</div>
     </div>
-    <div class="vocab-hint">scroll to spin</div>
+    <div class="vocab-hint">Scroll to spin</div>
   </div>
 </section>
 
 <div class="vocab-after">
 
-<!-- ─── FEATURED WORK — laying coverflow ──────── -->
-<section class="feat" id="feat" data-screen-label="02 Work">
+<!-- ─── FEATURED WORK, laying coverflow ──────── -->
+<section class="feat" id="feat">
   <div class="feat-stage" id="featStage">
     <div class="feat-wash"></div>
     <div class="feat-head">
@@ -91,14 +126,14 @@
     <div class="feat-track" id="featTrack"><!-- injected --></div>
     <div class="feat-readout">
       <div class="fr-tag" id="featTag">Quantitative research &amp; trading platform</div>
-      <a class="fr-cta" id="featCta" href="/project/?id=swinglab"><span id="featCtaLabel">View SwingLab</span> <span class="arw">→</span></a>
+      <a class="fr-cta" id="featCta" href="/project/?id=swinglab"><span id="featCtaLabel">View SwingLab</span> <span class="arw" aria-hidden="true">→</span></a>
     </div>
-    <div class="feat-hint">keep scrolling to slide the deck sideways · click the front card to open</div>
+    <div class="feat-hint">Keep scrolling to slide the deck. Click the front card to open it.</div>
   </div>
 </section>
 
 <!-- ─── ABOUT ─────────────────────────────────── -->
-<header class="sect-head" id="about" data-screen-label="03 About">
+<header class="sect-head" id="about">
   <div class="left"></div>
   <h2 class="reveal-chars">The person <em>behind</em> the work.</h2>
 </header>
@@ -106,40 +141,60 @@
 <section class="about">
   <div class="about-photo-col" data-rv>
     <div class="about-photo">
-      <img class="about-portrait" src="assets/images/me_image/me_image.jpeg" alt="Gergő Honyák" />
+      <img class="about-portrait" src="assets/images/me_image/me_image.jpeg"
+           width="825" height="1100" alt="Gergő Honyák" loading="lazy" />
     </div>
   </div>
 
   <div class="about-text">
-    <p class="lead" data-rv>
-      <span class="drop">I</span>'m a third-year Applied Data Science &amp; AI student at BUas, starting a pre-master at TU/e this September. I worked as a RAG intern, deploying the assistant on GCP. These days I'm mostly picking up new things in <em>statistics</em> and <em>ML</em>, and trying not to lose my own money on the quant strategies.
+    <p class="lead">
+      I'm a third-year Applied Data Science &amp; AI student at BUas, starting a pre-master at TU/e this September.
     </p>
 
-    <p data-rv>
+    <p>
+      I worked as a RAG intern, deploying the assistant on GCP. These days I'm mostly picking up new things in statistics and ML, and trying not to lose my own money on the quant strategies.
+    </p>
+
+    <p>
       I started programming in Python back in 2022, building little things with Flask. Then I moved into data science at BUas and worked through the whole ladder: regression, classification, clustering, then the heavier stuff like computer vision, NLP, and MLOps.
     </p>
 
-    <p data-rv>
+    <p>
       What I enjoy most is finding patterns and solving problems with data, so when I started reading about <strong>quantitative finance</strong> it clicked: modelling markets, measuring risk, trying to squeeze out returns. That's what pulled me into building SwingLab, and into IMC Prosperity 4, where I competed solo against 18,800 teams and finished 223rd overall, 1st in the Netherlands on the manual round.
     </p>
 
-    <p data-rv>
+    <p>
       The book that first got me into quant was Marcos Lopez de Prado's <em>Advances in Financial Machine Learning</em>, still the one I go back to most.
     </p>
 
+    <h3 class="about-sub">What live money has taught me</h3>
+
+    <p>
+      Since February I've had real capital in the strategy, enough that it matters to me, and it has had its ups and downs. Some of it has been very good: two weeks after the algo put me into <strong>Moderna</strong>, the position was up <strong>180%</strong>. It has also handed me the most expensive lesson I've paid for so far.
+    </p>
+
+    <p>
+      The algo flagged two new semiconductor names and I bought both. They each dropped about <strong>10% on the same day</strong> I opened them, and by that evening my feed was wall-to-wall certain this was the AI bubble finally popping. It clearly wasn't. I panic-sold both anyway, watched them turn straight back up the next morning, and turned what would have been a large profit into a real loss.
+    </p>
+
+    <p>
+      That is the whole argument for building the system in the first place. The rules exist precisely to strip out the part of me that reads sentiment and reacts to it, and the one time I overrode them, sentiment is exactly what cost me money. So now I <em>trust the algos</em> and let them run. I manage my own money this way, along with my family's and my girlfriend's, and I enjoy it far more than I expected to.
+    </p>
+
     <div class="about-side" data-rv>
-      <span class="k">Studying</span><span class="v">BSc Applied Data Science &amp; AI · BUas (3rd year) · GPA 4.0</span>
-      <span class="k">Next</span><span class="v">Pre-master Data Science &amp; AI · TU/e, from September</span>
-      <span class="k">Past</span><span class="v">RAG assistant intern · deployed on GCP</span>
-      <span class="k">Focus</span><span class="v">Quantitative ML · graph learning · MLOps</span>
-      <span class="k">Stack</span><span class="v">Python · PyTorch · SQL · FastAPI · React · GCP</span>
+      <span class="k">Studying</span><span class="v">BSc Applied Data Science &amp; AI ∙ BUas (3rd year) ∙ GPA 4.0</span>
+      <span class="k">Next</span><span class="v">Pre-master Data Science &amp; AI ∙ TU/e, from September</span>
+      <span class="k">Past</span><span class="v">RAG assistant intern ∙ deployed on GCP</span>
+      <span class="k">Focus</span><span class="v">Quantitative ML ∙ graph learning ∙ MLOps</span>
+      <span class="k">Trading</span><span class="v">MOM_BROAD live since February 2026 ∙ personal and family capital</span>
+      <span class="k">Stack</span><span class="v">Python ∙ PyTorch ∙ SQL ∙ FastAPI ∙ React ∙ GCP</span>
       <span class="k">Open to</span><span class="v">Quant research and trading internships in Amsterdam</span>
     </div>
   </div>
 </section>
 
 <!-- ─── CTA ───────────────────────────────────── -->
-<section class="cta" id="contact" data-screen-label="04 Contact">
+<section class="cta" id="contact">
   <h2 class="line-mask">
     <span class="line-mask"><span data-rv-line>Let's make</span></span>
     <span class="line-mask"><span data-rv-line><em>something good</em></span></span>
@@ -149,22 +204,24 @@
     <span class="eyebrow">Get in touch</span>
     <a href="mailto:honyakgergo7@gmail.com" class="cta-mail" data-rv>
       <span>honyakgergo7@gmail.com</span>
-      <span class="arrow">↗</span>
+      <span class="arrow" aria-hidden="true">↗</span>
     </a>
     <div class="cta-links">
-      <a href="https://github.com/honyakgergo/Portfolio" target="_blank" rel="noopener" data-rv><span>GitHub</span><span class="arr">↗</span></a>
-      <a href="https://www.linkedin.com/in/gerg%C5%91-hony%C3%A1k-956a3632a/" target="_blank" rel="noopener" data-rv><span>LinkedIn</span><span class="arr">↗</span></a>
+      <a href="https://github.com/honyakgergo/Portfolio" target="_blank" rel="noopener"><span>GitHub</span><span class="arr" aria-hidden="true">↗</span></a>
+      <a href="https://www.linkedin.com/in/gerg%C5%91-hony%C3%A1k-956a3632a/" target="_blank" rel="noopener"><span>LinkedIn</span><span class="arr" aria-hidden="true">↗</span></a>
     </div>
   </div>
 </section>
 
 <footer>
   <span>© 2026 Gergő Honyák</span>
-  <span>Set in Geist &amp; JetBrains Mono</span>
+  <span>Set in Schibsted Grotesk and JetBrains Mono</span>
 </footer>
 
 </div><!-- /.vocab-after -->
 </div><!-- /.ehero-after -->
+
+</main>
 
 <script src="assets/js/projects-data.js"></script>
 <script src="assets/js/viz.js"></script>
@@ -188,34 +245,80 @@ if (window.Lenis && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
   lenis.stop();   // held until the hero ride has played (started in the launch callback)
 }
 
-/* ─── EQUITY HERO — self-drawing chart, scroll-to-launch ─────── */
+/* ─── EQUITY HERO, self-drawing chart, scroll-to-launch ─────── */
 const heroReduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NAV_OFFSET = 88;   // keep anchor targets clear of the fixed bar
 if (window.EquityRoad) {
-  EquityRoad.init({ canvas: 'eroad', intro: 'eIntro', end: 'eEnd' });
+  EquityRoad.init({ canvas: 'eroad', intro: 'eIntro', end: 'eEnd', figure: 'eFigure' });
   EquityRoad.reset();
 
   let launched = false, landed = false, busy = false;
   const RIDE_MS = 4500;
-  const hint = document.getElementById('eHint');
+
+  const unlock = () => { landed = true; busy = false; window.__lenis && window.__lenis.start(); };
+
+  /* Returning from a project or the projects page, the browser restores the
+     scroll position it left. The hero holds the page frozen until its ride has
+     played, so a restore would strand the visitor mid-document with a dead
+     scroll. Anywhere below the top means the ride has already been seen: land
+     it with no animation and hand the scroll straight back.
+     The restore can arrive after this script runs, so watch for it as well,
+     while the scroll is frozen the only thing that can move it is the browser. */
+  const restoredBelowTop = () => (window.scrollY || document.documentElement.scrollTop || 0) > 4;
+  const landInstantly = () => {
+    if (landed || busy) return;
+    launched = true;
+    EquityRoad.play(1, 1);   // not 0, play() reads a falsy duration as its 1.6s default
+    unlock();
+  };
+  addEventListener('pageshow', () => { if (restoredBelowTop()) landInstantly(); });
+  addEventListener('scroll', () => { if (!landed && !busy && restoredBelowTop()) landInstantly(); }, { passive: true });
 
   if (heroReduce) {
     // reduced motion: snap straight to the landed chart, don't intercept scroll
     EquityRoad.play(1, 0);
     landed = true;
-    if (hint) hint.style.opacity = '0';
   } else {
     const launch = () => {
       if (busy || landed) return;
       launched = true; busy = true;
-      if (hint) hint.style.opacity = '0';
-      EquityRoad.play(1, RIDE_MS, () => { busy = false; landed = true; window.__lenis && window.__lenis.start(); });
+      EquityRoad.play(1, RIDE_MS, unlock);
+    };
+    /* Escape hatch for anything that leaves the hero without riding it.
+       Unlock synchronously, play()'s callback is up to 1.6s away, and until
+       then the page is scrolled away with its scroll still frozen. */
+    const jump = (then) => {
+      if (!landed) { launched = true; unlock(); EquityRoad.play(1, 600); }
+      if (then) requestAnimationFrame(then);
     };
     const rewind = () => {
       busy = true; landed = false;
       window.__lenis && window.__lenis.stop();
       window.scrollTo({ top: 0 });
-      EquityRoad.play(0, 1400, () => { busy = false; launched = false; if (hint) hint.style.opacity = ''; });
+      EquityRoad.play(0, 1400, () => { busy = false; launched = false; });
     };
+
+
+    if (restoredBelowTop()) landInstantly();
+
+    /* Every in-page anchor, nav, skip link, goes through here. Two jobs:
+       land the hero first so the page isn't left with a frozen scroll, and
+       scroll through Lenis, since it disables native scroll-behaviour. */
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a) return;
+      const href = a.getAttribute('href');
+      if (href === '#') return;
+      const el = document.getElementById(href.slice(1));
+      if (!el) return;
+      e.preventDefault();
+      const go = () => {
+        history.replaceState(null, '', href);
+        if (window.__lenis) window.__lenis.scrollTo(el, { offset: -NAV_OFFSET });
+        else el.scrollIntoView();
+      };
+      if (landed) go(); else jump(go);
+    });
 
     // A small scroll launches the cinematic instead of scrolling the page.
     window.addEventListener('wheel', (e) => {
@@ -223,32 +326,101 @@ if (window.EquityRoad) {
       if (e.deltaY < 0 && window.scrollY <= 1 && !busy) { e.preventDefault(); rewind(); }
     }, { passive: false });
 
-    // keyboard: down keys launch before landing
+    // keyboard: down keys launch before landing (but never steal keys from a focused control)
     window.addEventListener('keydown', (e) => {
       if (landed) return;
+      const onControl = e.target.closest && e.target.closest('a, button, input, textarea, select');
       if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ' || e.key === 'Spacebar') {
+        if (onControl && (e.key === ' ' || e.key === 'Spacebar')) return;
         e.preventDefault(); if (!launched) launch();
       }
+      if (e.key === 'End') { e.preventDefault(); jump(); }
     });
 
-    // touch equivalent
+    /* Touch equivalent of the two wheel gestures. Swiping up before the ride
+       launches it; once landed, pulling down while already at the top rewinds
+       to the portrait, without this the chart was a one-way door on a phone,
+       since scrolling to the top of the page just parks you back on it. */
     let ty = 0;
     window.addEventListener('touchstart', (e) => { ty = e.touches[0].clientY; }, { passive: true });
     window.addEventListener('touchmove', (e) => {
-      if (landed) return;
-      if (ty - e.touches[0].clientY > 6) { e.preventDefault(); launch(); }
+      const dy = ty - e.touches[0].clientY;   // positive = finger up = scrolling down
+      if (!landed) { if (dy > 6) { e.preventDefault(); launch(); } return; }
+      if (dy < -26 && !busy && (window.scrollY || 0) <= 1) { e.preventDefault(); rewind(); }
     }, { passive: false });
   }
 }
 
-/* nav + intro entrance (children only — the engine owns #eIntro / #eEnd container opacity) */
+/* nav + intro entrance, one orchestrated page-load sequence.
+   The engine owns #eIntro / #eEnd / #eFigure opacity, so the entrance
+   animates their children instead. */
 const heroTl = gsap.timeline({ defaults: { ease: 'expo.out' } });
 heroTl.from('.nav > *', { y: -16, opacity: 0, duration: 1, stagger: 0.08 }, 0.1);
-heroTl.from('#eIntro .kick', { y: 14, opacity: 0, duration: 0.9 }, 0.5);
-heroTl.from('#eIntro .ehero-name', { y: 26, opacity: 0, duration: 1.5, ease: 'power3.out' }, 0.6);
-heroTl.from('#eIntro .ehero-roles', { y: 20, opacity: 0, duration: 1.1, ease: 'power3.out' }, 0.95);
-heroTl.from('#eIntro .ehero-tag', { y: 20, opacity: 0, duration: 1.2, ease: 'power3.out' }, 1.15);
-heroTl.from('#eIntro .ehero-hint', { y: 14, opacity: 0, duration: 1.0, ease: 'power3.out' }, 1.25);
+heroTl.from('#eFigureIn', { opacity: 0, scale: 1.05, duration: 1.8, ease: 'power2.out', transformOrigin: '50% 30%' }, 0.15);
+heroTl.from('#eIntro .ehero-name', { y: 26, opacity: 0, duration: 1.5, ease: 'power3.out' }, 0.55);
+heroTl.from('#eIntro .ehero-roles', { y: 20, opacity: 0, duration: 1.1, ease: 'power3.out' }, 0.9);
+heroTl.from('#eIntro .ehero-tag', { y: 20, opacity: 0, duration: 1.2, ease: 'power3.out' }, 1.1);
+
+/* ─── INK IN WATER, the name, swiped ────────────
+   A blue copy of the name sits over the white one and is revealed through a
+   mask built from the last few cursor positions. Each drop blooms outward,
+   drifts up and fades, so dragging across the letters leaves colour spreading
+   through them and settling, rather than a spotlight tracking the pointer.
+   Only the mask changes per frame, one property on one element, and the
+   loop is only alive while drops are. */
+(() => {
+  const name = document.getElementById('eName');
+  const ink  = name && name.querySelector('.nm-ink');
+  const intro = document.getElementById('eIntro');
+  if (!ink) return;
+  // pointer-driven and motion-heavy: skip it where neither applies
+  if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const EMPTY = 'radial-gradient(circle 0px at 50% 50%, #000, transparent)';
+  const LIFE  = 1400;   // ms from drop to gone
+  const MAX   = 18;     // drops kept; a swipe is a stroke, not a dot
+  const drops = [];
+  let box = null, raf = 0;
+
+  const measure = () => { box = name.getBoundingClientRect(); };
+  addEventListener('resize', measure, { passive: true });
+  name.addEventListener('pointerenter', measure);
+
+  name.addEventListener('pointermove', (e) => {
+    if (e.pointerType === 'touch') return;
+    // the engine fades #eIntro out on launch; don't paint into an empty stage
+    if (parseFloat(intro.style.opacity || '1') < 0.5) return;
+    if (!box) measure();
+    const x = e.clientX - box.left, y = e.clientY - box.top;
+    const last = drops[drops.length - 1];
+    if (last && Math.hypot(x - last.x, y - last.y) < 9) return;
+    drops.push({ x, y, t: performance.now(), p: Math.random() * 6.28 });
+    if (drops.length > MAX) drops.shift();
+    if (!raf) raf = requestAnimationFrame(tick);
+  });
+
+  function tick(now) {
+    raf = 0;
+    const layers = [];
+    for (const d of drops) {
+      const k = (now - d.t) / LIFE;
+      if (k >= 1) continue;
+      const r = 14 + 104 * (1 - (1 - k) * (1 - k));         // opens out, easing
+      const a = (1 - k) * (1 - k) * 0.95;                    // and thins as it goes
+      const x = d.x + Math.sin(k * 5 + d.p) * 7;             // wander
+      const y = d.y - k * 13;                                // and rise
+      layers.push('radial-gradient(circle ' + r.toFixed(1) + 'px at ' +
+        x.toFixed(1) + 'px ' + y.toFixed(1) + 'px, rgba(0,0,0,' + a.toFixed(3) +
+        ') 0%, rgba(0,0,0,' + (a * 0.42).toFixed(3) + ') 46%, rgba(0,0,0,0) 74%)');
+    }
+    const m = layers.length ? layers.join(',') : EMPTY;
+    ink.style.webkitMaskImage = m;
+    ink.style.maskImage = m;
+    if (layers.length) raf = requestAnimationFrame(tick);
+    else drops.length = 0;
+  }
+})();
 
 /* ─── SCROLL REVEALS ────────────────────────── */
 gsap.utils.toArray('[data-rv-line]').forEach(el => {
@@ -300,13 +472,16 @@ gsap.utils.toArray('.reveal-chars').forEach(h2 => {
 
 window.addEventListener('load', () => ScrollTrigger.refresh());
 
-/* the phone and desktop featured layouts init differently, so re-run cleanly
-   when the viewport crosses the 820px breakpoint (rotate / resize / device mode) */
-let __wasMobile = matchMedia('(max-width:820px)').matches;
-addEventListener('resize', () => {
-  const m = matchMedia('(max-width:820px)').matches;
-  if (m !== __wasMobile) { __wasMobile = m; location.reload(); }
-});
+/* The flat carousel and the scroll-scrubbed coverflow init differently and the
+   choice is made once, at load. Re-run cleanly whenever the condition flips,
+   crossing 820px (rotate / resize / device mode) or toggling reduced motion. */
+const __flatQ = matchMedia('(max-width:820px), (prefers-reduced-motion: reduce)');
+let __wasFlat = __flatQ.matches;
+const __reinit = () => {
+  if (__flatQ.matches !== __wasFlat) { __wasFlat = __flatQ.matches; location.reload(); }
+};
+addEventListener('resize', __reinit);
+__flatQ.addEventListener('change', __reinit);
 </script>
 
 </body>

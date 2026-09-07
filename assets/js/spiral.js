@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   Skill spiral — vertical 3D helix of the stack, scroll-scrubbed.
+   Skill spiral, vertical 3D helix of the stack, scroll-scrubbed.
    Self-initialising. Expects in the DOM:
      section#vocab  (tall, 300vh)  →  div#vocabStage (fixed)  →  div#vhelix
      div#vFocusName (the "in focus" readout)
@@ -51,8 +51,25 @@
     return { el, img: el.querySelector("img"), name: s.name };
   });
 
-  /* ---- geometry / motion constants ---- */
-  const R = 300, STEP_ANGLE = 40, STEP_Y = 126;
+  /* ---- geometry / motion constants ----
+     The helix is a circle on the desktop, the same radius drives how far a
+     tile swings sideways (RX) and how far it travels away from you (RZ). On a
+     390px screen that sideways swing is the problem: a tile a third of a step
+     off centre lands ~85px out once perspective magnifies it, which is most of
+     the way to the edge, and its neighbours crowd in over it. So a phone gets
+     an ellipse instead, the swing is flattened right down while the depth
+     travel is kept, and the pitch opens up so the tile above and the tile
+     below clear the focused one instead of overlapping it. */
+  const STEP_ANGLE = 40;
+  let RX = 300, RZ = 300, STEP_Y = 126;
+  function geometry() {
+    const narrow = innerWidth <= 820;
+    RX = narrow ? 45 : 300;
+    RZ = 300;
+    STEP_Y = narrow ? 172 : 126;
+  }
+  geometry();
+  addEventListener("resize", geometry, { passive: true });
   const IDLE = 0.10;              // gentle drift when not scrolling
   const SCROLL_SPAN = N * 1.15;   // how many tiles a full scroll sweeps through
   const FOCUS = 0.55;            // |rel| under this = the focused tile
@@ -83,8 +100,8 @@
       const ang = rel * STEP_ANGLE;
       const y = rel * STEP_Y;
       const rad = ang * Math.PI / 180;
-      const z = Math.cos(rad) * R;
-      const x = Math.sin(rad) * R;
+      const z = Math.cos(rad) * RZ;
+      const x = Math.sin(rad) * RX;
 
       const focused = af < FOCUS;
       const depth = clamp(1 - af / (N / 2), 0, 1);

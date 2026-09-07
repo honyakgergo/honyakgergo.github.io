@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   Featured — horizontal scroll gallery, scroll-scrubbed.
+   Featured, horizontal scroll gallery, scroll-scrubbed.
    Self-initialising. Reads FEATURED_PROJECTS (projects-data.js),
    adds a 7th "More projects" card, and as #feat scrolls past it
    pins and slides the row of cards sideways (you travel rightward
@@ -15,15 +15,15 @@
   /* muted, earthy accent per project (matches the spiral palette) */
   const ACCENT = {
     'swinglab': '#6d92bd', 'gnn': '#8f7fb0', 'sentify': '#6faa9b',
-    'money-dashboard': '#7f9e6b', 'prosperity': '#c0787f', 'npec': '#c39a5c',
+    'volatility-dashboard': '#7f9e6b', 'prosperity': '#c0787f', 'npec': '#c39a5c',
   };
   /* short, punchy readout line per project */
   const TAG = {
     'swinglab': 'A quantitative research & trading platform, now running live on real capital',
     'gnn': 'Graph neural nets for cross-sectional equity return prediction',
     'sentify': 'A media emotion classifier wrapped in a full auto-retraining MLOps stack',
-    'money-dashboard': 'A live market cockpit that reads regime shifts through the trading day',
-    'prosperity': 'Solo entry, 223rd of 18,800 teams — options pricing off the IV smile',
+    'volatility-dashboard': 'The screen I read every day: breadth, rotation, the vol complex and weekly positioning',
+    'prosperity': 'Solo entry, 223rd of 18,800 teams, pricing options off the IV smile',
     'npec': 'Root segmentation to robotics: U-Net → Dijkstra length → RL-controlled arm',
   };
   /* a few enticing keywords per card (mirrors the archive) */
@@ -31,7 +31,7 @@
     'swinglab': ['Live capital', 'Momentum', 'Backtester'],
     'gnn': ['Graph neural net', 'Alpha', 'Walk-forward'],
     'sentify': ['Emotion AI', 'Auto-retrain', 'On-prem'],
-    'money-dashboard': ['Regime shift', 'Live breadth', 'Volatility'],
+    'volatility-dashboard': ['Vol complex', 'RRG rotation', 'Weekly positioning'],
     'prosperity': ['Options', 'IV smile', 'Game theory'],
     'npec': ['Root seg', 'Robotics', 'U-Net'],
   };
@@ -40,11 +40,12 @@
   const CARDS = feat.map(p => ({
     id: p.id, num: p.n, name: p.title, em: p.em,
     tag: TAG[p.id] || p.type, accent: ACCENT[p.id] || '#6d92bd',
-    keys: KEYS[p.id] || (p.tags || []).slice(0, 3), href: `/project/?id=${p.id}`,
+    keys: KEYS[p.id] || (p.tags || []).slice(0, 3),
+    tech: (p.tags || []).slice(0, 4), href: `/project/?id=${p.id}`,
   }));
   CARDS.push({
     id: 'archive', num: '( all )', name: 'More projects', em: '',
-    tag: 'The full archive — 11 projects', accent: '#7b8bb0',
+    tag: 'All eleven projects, in one place', accent: '#7b8bb0',
     img: '', href: '/archive/', more: true,
   });
 
@@ -66,7 +67,7 @@
       el.innerHTML =
         `<div class="more-face" style="--a:${c.accent}"><div class="more-inner">
            <span class="more-t">More projects</span>
-           <span class="more-s">The full archive →</span>
+           <span class="more-s">See every project →</span>
          </div></div>`;
     } else {
       el.innerHTML =
@@ -79,6 +80,7 @@
            <div class="fmeta">
              <span class="ft">${c.name}${c.em ? ` <em>${c.em}</em>` : ''}</span>
              <div class="f-keys">${(c.keys || []).map(w => `<span>${w}</span>`).join('')}</div>
+             ${(c.tech || []).length ? `<div class="f-tech">${c.tech.join(' · ')}</div>` : ''}
            </div>
          </div>`;
     }
@@ -87,23 +89,31 @@
   });
 
   /* ---- MOBILE: swipe + arrow carousel (fixed-size cards, no coverflow scaling) ---- */
-  if (matchMedia('(max-width:820px)').matches) {
+  const FLAT = matchMedia('(max-width:820px), (prefers-reduced-motion: reduce)');
+
+  if (FLAT.matches) {
     let cur = -1, targetIdx = 0, animating = false, sraf = null;
+    /* Reduced motion reaches this branch too, it is one of the two reasons
+       flat mode exists. Everything below that moves for effect is skipped for
+       those visitors: the glide becomes a jump, and the deck stays flat. */
+    const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     // eased, hand-feeling glide to a card (softer than native smooth-scroll)
     const easeOut = t => 1 - Math.pow(1 - t, 3);   // decelerates like a flick coasting to rest
-    const animateScroll = (to, dur = 560) => {
+    const animateScroll = (to, dur = 620) => {
       if (sraf) cancelAnimationFrame(sraf);
       const start = track.scrollLeft, delta = to - start;
       if (Math.abs(delta) < 1) return;
+      if (REDUCE) { track.scrollLeft = to; return; }
       animating = true;
       track.style.scrollSnapType = 'none';   // stop snap from fighting the tween
       const t0 = performance.now();
       const stepA = (now) => {
         const k = Math.min(1, (now - t0) / dur);
         track.scrollLeft = start + delta * easeOut(k);
+        paint();                            // the deck reshapes as it travels
         if (k < 1) { sraf = requestAnimationFrame(stepA); }
-        else { sraf = null; animating = false; track.style.scrollSnapType = ''; }
+        else { sraf = null; animating = false; track.style.scrollSnapType = ''; paint(); }
       };
       sraf = requestAnimationFrame(stepA);
     };
@@ -136,6 +146,33 @@
     prev.addEventListener('click', () => goTo(targetIdx - 1));
     next.addEventListener('click', () => goTo(targetIdx + 1));
 
+    /* Swipe feel. Scrolling the track alone slides a flat row past the window,
+       which on a phone barely reads as a change of card. So the deck responds
+       to its own scroll position: whatever is centred stands at full size and
+       full brightness, and its neighbours sit back, shrink and dim in
+       proportion to how far off centre they are. Because it is driven by
+       scrollLeft rather than by the click, a finger swipe gets exactly the
+       same motion as the arrows, the cards follow the thumb.
+
+       Written straight to style rather than as a CSS transition: a transition
+       would lag behind the scroll and swim. */
+    const paint = () => {
+      if (REDUCE) return;
+      const mid = track.scrollLeft + track.clientWidth / 2;
+      for (let i = 0; i < N; i++) {
+        const el = CARDS[i].el;
+        const d = clamp((el.offsetLeft + el.offsetWidth / 2 - mid) / el.offsetWidth, -1.7, 1.7);
+        const a = Math.abs(d);
+        const near = Math.min(a, 1);
+        el.style.transform =
+          'translateX(' + (-d * 14).toFixed(1) + 'px) ' +   // slight drag against the scroll
+          'scale(' + (1 - near * 0.11).toFixed(4) + ')';
+        el.style.opacity = (1 - near * 0.42).toFixed(3);
+        el.style.filter = a < 0.06 ? 'none' : 'brightness(' + (1 - near * 0.26).toFixed(3) + ')';
+        el.style.zIndex = String(100 - Math.round(a * 10));
+      }
+    };
+
     const syncReadout = () => {
       const mid = track.scrollLeft + track.clientWidth / 2;
       let best = 0, bestD = Infinity;
@@ -151,7 +188,7 @@
         const c = CARDS[best];
         stage.style.setProperty('--focus', c.accent);
         if (tagEl) tagEl.textContent = c.tag;
-        if (ctaLbl) ctaLbl.textContent = c.more ? 'Browse the archive' : 'View ' + c.name;
+        if (ctaLbl) ctaLbl.textContent = c.more ? 'Browse all projects' : 'View ' + c.name;
         if (ctaEl) ctaEl.setAttribute('href', c.href);
         for (let i = 0; i < N; i++) CARDS[i].el.classList.toggle('focused', i === best);
         dotEls.forEach((d, i) => d.classList.toggle('on', i === best));
@@ -161,13 +198,15 @@
     };
     let ticking = false;
     track.addEventListener('scroll', () => {
-      if (!ticking) { ticking = true; requestAnimationFrame(() => { syncReadout(); ticking = false; }); }
+      if (!ticking) { ticking = true; requestAnimationFrame(() => { paint(); syncReadout(); ticking = false; }); }
     }, { passive: true });
+    addEventListener('resize', paint, { passive: true });
     // if the user grabs the track mid-glide, hand control straight back to them
     track.addEventListener('touchstart', () => {
       if (sraf) { cancelAnimationFrame(sraf); sraf = null; animating = false; track.style.scrollSnapType = ''; }
     }, { passive: true });
     if (stage) stage.style.opacity = '1';
+    paint();
     syncReadout();
     return;   // skip the desktop scroll-scrubbed coverflow
   }
@@ -183,7 +222,7 @@
   let curFocus = -1;
 
   function frame() {
-    if (matchMedia('(max-width:820px)').matches) { stage.style.opacity = '1'; requestAnimationFrame(frame); return; }  // never drive the coverflow at phone widths
+    if (FLAT.matches) { stage.style.opacity = '1'; requestAnimationFrame(frame); return; }  // never drive the coverflow in flat mode
     if (!cardW) measure();
     const r = section.getBoundingClientRect();
     const vh = innerHeight;
@@ -221,7 +260,7 @@
       const c = CARDS[fi];
       stage.style.setProperty('--focus', c.accent);
       if (tagEl) { tagEl.style.opacity = '0'; setTimeout(() => { tagEl.textContent = c.tag; tagEl.style.opacity = '1'; }, 150); }
-      if (ctaLbl) ctaLbl.textContent = c.more ? 'Browse the archive' : 'View ' + c.name;
+      if (ctaLbl) ctaLbl.textContent = c.more ? 'Browse all projects' : 'View ' + c.name;
       if (ctaEl) ctaEl.setAttribute('href', c.href);
     }
     requestAnimationFrame(frame);

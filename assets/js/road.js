@@ -1,4 +1,4 @@
-/* ═══ Equity-road hero — DARK EDITION, section-scroll driven ═══
+/* ═══ Equity-road hero, DARK EDITION, section-scroll driven ═══
    window.EquityRoad.init({canvas, section, stage, intro, end})
    Identical geometry/camera to the light road.js; only the colours
    (line, gridlines, value/year labels, skill-gate labels) are tuned

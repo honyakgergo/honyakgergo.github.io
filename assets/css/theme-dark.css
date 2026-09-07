@@ -1,22 +1,26 @@
 /* ══════════════════════════════════════════════════════════════
-   DARK EDITION — override layer, loaded AFTER site.css + hero.css.
+   DARK EDITION, override layer, loaded AFTER site.css + hero.css.
    Redefines the design tokens (so ~90% of the site flips for free)
    plus the handful of hardcoded-colour spots, and adds the skill
    spiral that replaces the flat stack grid.
+
+   Greys are picked so every one of them clears 4.5:1 on --paper:
+   --ink-2 10:1 · --ink-mute 7:1 · --ink-faint 4.7:1.
    ══════════════════════════════════════════════════════════════ */
 
 :root{
-  --paper:#0b0c0e; --paper-2:#16181c; --paper-3:#23262c;
-  --ink:#f2f2f5; --ink-2:#c7c9d1; --ink-mute:#8a8d97; --ink-faint:#5f636d;
-  --rule:rgba(255,255,255,.12); --rule-soft:rgba(255,255,255,.06);
-  --sage:#5b93ff; --ochre:#5b93ff; --rust:#5b93ff; --blue:#5b93ff;
+  --paper:#07080a; --paper-2:#111318; --paper-3:#1c1f26;
+  --ink:#f4f5f7; --ink-2:#b9bdc7; --ink-mute:#979ca6; --ink-faint:#7c828c;
+  --rule:rgba(255,255,255,.11); --rule-soft:rgba(255,255,255,.055);
+  --blue:#5b93ff;
   --blue-soft:rgba(91,147,255,.14);
+  --sage:var(--blue); --ochre:var(--blue); --rust:var(--blue);
 }
 
 /* animatable per-skill focus colour for the spiral (registered so it can transition/wash) */
 @property --focus{ syntax:'<color>'; inherits:true; initial-value:#5b93ff; }
 
-::selection{ background:var(--blue); color:#0b0c0e; }
+::selection{ background:var(--blue); color:#07080a; }
 
 /* site.css sets overflow-x:hidden on html/body, which disables position:sticky.
    overflow-x:clip prevents horizontal scroll WITHOUT creating a scroll
@@ -30,20 +34,20 @@ html.lenis, html.lenis body{ height:auto; }
 .lenis.lenis-stopped{ overflow:hidden; }
 
 /* glass bars → dark */
-.nav{ background:rgba(11,12,14,.72); }
-.filter-bar-wrap{ background:rgba(11,12,14,.85); }
+.nav{ background:rgba(7,8,10,.72); }
+.filter-bar-wrap{ background:rgba(7,8,10,.85); }
 
 /* stack icons (if any page still uses the flat grid) → white marks */
 .stack-card .icon img{ filter:brightness(0) saturate(100%) invert(1); }
 .stack-card:hover .icon img{ filter:brightness(0) saturate(100%) invert(55%) sepia(60%) saturate(2200%) hue-rotate(199deg) brightness(103%) contrast(97%); }
 
-/* ── project cards: modern elevated dark panels (was: flat unified surface) ── */
+/* ── project cards: modern elevated dark panels ── */
 .work .pcard:nth-child(odd),
 .work .pcard:nth-child(even){ transform:none; }   /* drop the editorial tilt on dark */
 
 .pcard,
 .pcard.tone-sage, .pcard.tone-ochre, .pcard.tone-paper, .pcard.tone-ink{
-  background:linear-gradient(165deg,#1b1e25 0%,#141619 58%,#101217 100%);
+  background:linear-gradient(165deg,#191c23 0%,#12141a 58%,#0d0f14 100%);
   color:var(--ink);
   border:1px solid rgba(255,255,255,.09);
   border-radius:18px;
@@ -65,7 +69,7 @@ html.lenis, html.lenis body{ height:auto; }
 
 /* the viz "screen": framed recessed panel with a faint blue floor-glow */
 .pcard-stage, .pcard.tone-ink .pcard-stage{
-  background:radial-gradient(120% 85% at 50% 118%, rgba(91,147,255,.18), transparent 60%), linear-gradient(180deg,#0e1116,#0a0c10);
+  background:radial-gradient(120% 85% at 50% 118%, rgba(91,147,255,.18), transparent 60%), linear-gradient(180deg,#0c0e13,#08090d);
   border:1px solid rgba(255,255,255,.07);
   border-radius:12px;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
@@ -75,16 +79,16 @@ html.lenis, html.lenis body{ height:auto; }
 .pcard.tone-ink .p-tags span{ border-color:var(--rule); color:var(--ink-2); }
 .pcard.tone-ink h3 em{ color:var(--blue); }
 .pcard .p-arrow{ border-color:var(--rule); color:var(--ink-mute); }
-.pcard:hover .p-arrow{ background:var(--blue); border-color:var(--blue); color:#0b0c0e; transform:rotate(-45deg); }
+.pcard:hover .p-arrow{ background:var(--blue); border-color:var(--blue); color:#07080a; transform:rotate(-45deg); }
 
 /* archive filter chip (active used #fff on --ink; --ink is light now) */
-.f-chip.active{ background:var(--blue); border-color:var(--blue); color:#0b0c0e; }
+.f-chip.active{ background:var(--blue); border-color:var(--blue); color:#07080a; }
 
 /* more-projects CTA fills blue on hover → keep text white */
 .more-cta:hover{ color:#fff; }
 .more-cta:hover .mc-arrow{ color:#fff; }
 
-/* about portrait frame fallback (behind the photo) */
+/* fallback behind the (opaque) About photo */
 .about-photo{ background:radial-gradient(ellipse at 30% 25%, rgba(91,147,255,.14), transparent 60%), linear-gradient(160deg,#1a1c20,#0e1013); }
 
 /* project-detail exhibit frames */
@@ -98,16 +102,16 @@ html.lenis, html.lenis body{ height:auto; }
 .reveal-chars .rch-i{ display:inline-block; will-change:transform; }
 .reveal-chars .rword{ display:inline-block; white-space:nowrap; vertical-align:top; }
 
-/* ══ FEATURED WORK — laying coverflow, scroll-scrubbed ══ */
+/* ══ FEATURED WORK, laying coverflow, scroll-scrubbed ══ */
 .feat{ position:relative; height:340vh; background:var(--paper); }
 .feat-stage{ position:sticky; top:0; height:100vh; overflow:hidden; perspective:1700px; --focus:#6d92bd; transition:--focus .7s ease; }
 .feat-wash{ position:absolute; inset:0; pointer-events:none;
   background:radial-gradient(ellipse 80% 60% at 50% 44%, color-mix(in srgb, var(--focus) 13%, transparent), transparent 62%); }
 
 .feat-head{ position:absolute; top:clamp(84px,12vh,120px); left:0; right:0; text-align:center; z-index:6; pointer-events:none; }
-.feat-head .label{ font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:12px; }
-.feat-head h2{ font-family:var(--serif); font-weight:300; font-size:clamp(30px,4.2vw,56px); line-height:1; letter-spacing:-.025em; margin:0; }
-.feat-head h2 em{ font-style:italic; color:var(--focus); transition:color .7s ease; }
+.feat-head .label{ font-size:13px; font-weight:500; color:var(--ink-mute); margin-bottom:12px; }
+.feat-head h2{ font-weight:700; font-size:clamp(26px,3.6vw,46px); line-height:1.03; letter-spacing:-.032em; margin:0; }
+.feat-head h2 em{ color:var(--focus); transition:color .7s ease; }
 
 .feat-track{ position:absolute; left:50%; top:53%; transform-style:preserve-3d; z-index:4; }
 .fcard{ position:absolute; left:0; top:0; display:block; --cw:clamp(320px,34vw,560px);
@@ -116,29 +120,30 @@ html.lenis, html.lenis body{ height:auto; }
   box-shadow:0 40px 90px -40px rgba(0,0,0,.9); transform-style:preserve-3d; will-change:transform;
   text-decoration:none; color:inherit; }
 .fcard .fface{ position:absolute; inset:0; }
-.fcard .f-ghost{ position:absolute; top:-.16em; right:.05em; font-family:var(--serif); font-weight:200;
-  font-size:clamp(96px,10vw,150px); line-height:1; color:color-mix(in srgb, var(--a) 40%, transparent); opacity:.5; pointer-events:none; }
+.fcard .f-ghost{ position:absolute; top:-.1em; right:.04em; font-weight:800; letter-spacing:-.04em;
+  font-size:clamp(88px,9vw,138px); line-height:1; color:color-mix(in srgb, var(--a) 40%, transparent); opacity:.5; pointer-events:none; }
 .fcard .fmeta{ position:absolute; left:24px; right:24px; bottom:22px; z-index:2; }
-.fcard .fmeta .ft{ font-family:var(--serif); font-weight:400; font-size:clamp(23px,2vw,30px); line-height:1.05; letter-spacing:-.01em; color:#fff; }
-.fcard .fmeta .ft em{ font-style:italic; font-weight:300; color:rgba(255,255,255,.72); }
+.fcard .fmeta .ft{ font-weight:600; font-size:clamp(22px,1.95vw,29px); line-height:1.1; letter-spacing:-.022em; color:#fff; }
+.fcard .fmeta .ft em{ font-weight:400; color:rgba(255,255,255,.6); }
 .fcard .f-keys{ display:flex; flex-wrap:wrap; gap:7px; margin-top:14px; }
-.fcard .f-keys span{ font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2);
+.fcard .f-keys span{ font-size:12px; color:var(--ink-2);
   border:1px solid var(--rule); border-radius:100px; padding:5px 11px; background:rgba(255,255,255,.03); }
+.fcard .f-tech{ margin-top:10px; font-family:var(--mono); font-size:11px; letter-spacing:.02em; color:var(--ink-faint); }
 .fcard.focused{ border-color:rgba(255,255,255,.2); }
 
 .fcard.more .more-face{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-  background:radial-gradient(120% 120% at 50% 28%, color-mix(in srgb, var(--a) 32%, transparent), transparent 60%), linear-gradient(160deg,#141820,#0a0b0f);
+  background:radial-gradient(120% 120% at 50% 28%, color-mix(in srgb, var(--a) 32%, transparent), transparent 60%), linear-gradient(160deg,#12161e,#08090d);
   border:1px dashed rgba(255,255,255,.16); border-radius:16px; }
 .fcard.more .more-inner{ text-align:center; }
-.fcard.more .more-k{ display:block; font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:14px; }
-.fcard.more .more-t{ display:block; font-family:var(--serif); font-weight:300; font-size:34px; letter-spacing:-.02em; color:var(--ink); }
-.fcard.more .more-s{ display:block; margin-top:12px; font-family:var(--mono); font-size:11px; letter-spacing:.08em; color:var(--ink-mute); }
+.fcard.more .more-k{ display:block; font-size:13px; font-weight:500; color:var(--ink-mute); margin-bottom:14px; }
+.fcard.more .more-t{ display:block; font-weight:600; font-size:32px; letter-spacing:-.024em; color:var(--ink); }
+.fcard.more .more-s{ display:block; margin-top:12px; font-size:13px; color:var(--ink-mute); }
 
 .feat-readout{ position:absolute; left:0; right:0; bottom:clamp(70px,11vh,110px); text-align:center; z-index:6; pointer-events:none; }
-.feat-readout .fr-tag{ font-family:var(--serif); font-style:italic; font-size:clamp(15px,1.6vw,20px); color:var(--ink-2); transition:opacity .3s ease; }
+.feat-readout .fr-tag{ font-size:clamp(15px,1.5vw,18px); color:var(--ink-2); transition:opacity .3s ease; }
 .feat-readout .fr-cta{ margin-top:15px; position:relative; display:inline-flex; align-items:center; gap:9px; pointer-events:auto; text-decoration:none;
-  font-family:var(--serif); font-weight:400; font-size:clamp(15px,1.5vw,18px); letter-spacing:.005em; color:var(--ink-2);
-  padding:2px 1px 7px; transition:color .3s ease; }
+  font-family:var(--sans); font-weight:500; font-size:15px; color:var(--ink-2);
+  padding:6px 2px 8px; transition:color .3s ease; }
 .feat-readout .fr-cta .arw{ color:var(--focus); font-style:normal; transition:transform .35s cubic-bezier(.2,.7,.2,1), color .6s ease; }
 .feat-readout .fr-cta::after{ content:''; position:absolute; left:0; right:0; bottom:0; height:1px; background:var(--focus);
   transform:scaleX(0); transform-origin:left; transition:transform .45s cubic-bezier(.2,.7,.2,1), background .6s ease; }
@@ -146,10 +151,12 @@ html.lenis, html.lenis body{ height:auto; }
 .feat-readout .fr-cta:hover .arw{ transform:translateX(6px); }
 .feat-readout .fr-cta:hover::after{ transform:scaleX(1); }
 
-.feat-hint{ position:absolute; left:0; right:0; bottom:30px; text-align:center; z-index:6; pointer-events:none;
-  font-family:var(--mono); font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint); }
-/* ── MOBILE: native horizontal swipe carousel (replaces the scroll-scrubbed coverflow) ── */
-@media (max-width:820px){
+.feat-hint{ position:absolute; left:0; right:0; bottom:28px; text-align:center; z-index:6; pointer-events:none;
+  font-size:12.5px; color:var(--ink-faint); }
+/* ── FLAT MODE: native horizontal swipe carousel instead of the scroll-scrubbed
+      coverflow. Phones get it for the touch affordance; reduced-motion users
+      get it because a 340vh pinned scrub is exactly what they opted out of. ── */
+@media (max-width:820px), (prefers-reduced-motion: reduce){
   .feat{ height:auto; }
   .feat-stage{ position:relative; top:auto; height:auto; overflow:visible; perspective:none; padding:104px 0 76px; opacity:1 !important; }
   .feat-wash{ display:none; }
@@ -158,11 +165,20 @@ html.lenis, html.lenis body{ height:auto; }
     display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x mandatory;
     -webkit-overflow-scrolling:touch; padding:8px 16px 16px; scrollbar-width:none; }
   .feat-track::-webkit-scrollbar{ display:none; }
+  /* the subtitle is an inline <em> on a wide card, where it sits on the same
+     line as the name; at 82vw it wraps mid-phrase, so give it its own line */
+  .fcard .fmeta .ft em{ display:block; }
+  /* featured.js drives transform / opacity / filter here from the track's own
+     scroll position, so, unlike before, they must not be locked down. The
+     scroll-scrubbed coverflow never runs in this mode, so nothing else writes
+     to them. transform-origin sits low so a card shrinks towards the deck
+     rather than towards its own middle. */
   .fcard{ position:relative; left:auto; top:auto; margin:0; width:82vw; --cw:82vw;
-    flex:0 0 82vw; transform:none !important; opacity:1 !important; filter:none !important;
-    box-shadow:0 30px 70px -40px rgba(0,0,0,.9) !important; scroll-snap-align:center; }
+    flex:0 0 82vw; scroll-snap-align:center;
+    transform-origin:50% 78%; will-change:transform, opacity;
+    box-shadow:0 30px 70px -40px rgba(0,0,0,.9) !important; }
   .feat-readout{ position:relative; left:auto; right:auto; bottom:auto; margin:20px 22px 0; }
-  /* reserve two lines so the readout height is constant per card — stops the section below from jumping */
+  /* reserve two lines so the readout height is constant per card, stops the section below from jumping */
   .feat-readout .fr-tag{ min-height:2.8em; line-height:1.4; display:flex; align-items:center; justify-content:center; }
   /* prev / next arrow + dot controls (mobile only) */
   .feat-nav{ display:flex; align-items:center; justify-content:center; gap:16px; margin:16px 22px 0; }
@@ -173,9 +189,9 @@ html.lenis, html.lenis body{ height:auto; }
   .feat-nav button:disabled{ opacity:.28; }
   .feat-nav button svg{ width:17px; height:17px; }
   .fn-dots{ display:flex; align-items:center; gap:7px; }
-  .fn-dots i{ width:6px; height:6px; border-radius:50%; background:var(--ink-faint); opacity:.45;
+  .fn-dots i{ width:10px; height:10px; border-radius:50%; background:var(--ink-faint); opacity:.45;
     transition:opacity .3s ease, background .3s ease, transform .3s ease; cursor:pointer; }
-  .fn-dots i.on{ opacity:1; background:var(--focus,#5b93ff); transform:scale(1.35); }
+  .fn-dots i.on{ opacity:1; background:var(--focus,#5b93ff); transform:scale(1.25); }
   .feat-hint{ display:none; }
 }
 
@@ -209,11 +225,11 @@ html.lenis, html.lenis body{ height:auto; }
 }
 .vtile .ic{ width:120px; height:120px; display:flex; align-items:center; justify-content:center; }
 .vtile .ic img{ width:100%; height:100%; display:block; }
-.vtile .nm{ font-family:var(--mono); font-size:23px; letter-spacing:.04em; color:var(--ink-2); white-space:nowrap; }
+/* tool names stay in the mono face, they're code identifiers, not labels */
+.vtile .nm{ font-family:var(--mono); font-size:22px; letter-spacing:.02em; color:var(--ink-2); white-space:nowrap; }
 .vtile.focus{ border-color:color-mix(in srgb, var(--focus) 42%, var(--rule));
-  /* no hard ring — a graduated halo instead: a faint edge kiss, a tight bloom,
-     then two progressively softer/wider washes, plus a dark grounding shadow.
-     Lower saturation than before so it glows rather than neon-outlines. */
+  /* no hard ring, a graduated halo instead: a faint edge kiss, a tight bloom,
+     then two progressively softer/wider washes, plus a dark grounding shadow. */
   box-shadow:
     0 0 1px color-mix(in srgb, var(--focus) 38%, transparent),
     0 0 20px -4px color-mix(in srgb, var(--focus) 32%, transparent),
@@ -223,25 +239,25 @@ html.lenis, html.lenis body{ height:auto; }
 .vtile.focus .nm{ color:var(--focus); }
 
 .vocab-head{ position:absolute; top:clamp(96px,13vh,150px); left:clamp(24px,5vw,72px); max-width:min(460px,78vw); z-index:5; pointer-events:none; }
-.vocab-head .label{ font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:16px; }
-.vocab-head h2{ font-family:var(--serif); font-weight:300; font-size:clamp(34px,4.6vw,60px); line-height:1; letter-spacing:-.025em; margin:0; }
-.vocab-head h2 em{ font-style:italic; color:var(--blue); }
-.vocab-head p{ margin-top:16px; font-size:clamp(14px,1.2vw,17px); line-height:1.5; color:var(--ink-2); max-width:40ch; }
+.vocab-head .label{ font-size:13px; font-weight:500; color:var(--ink-mute); margin-bottom:16px; }
+.vocab-head h2{ font-weight:700; font-size:clamp(28px,3.8vw,48px); line-height:1.03; letter-spacing:-.032em; margin:0; }
+.vocab-head h2 em{ color:var(--blue); }
+.vocab-head p{ margin-top:16px; font-size:clamp(14.5px,1.15vw,17px); line-height:1.58; color:var(--ink-2); max-width:26em; }
 
 .vocab-readout{ position:absolute; left:clamp(24px,5vw,72px); bottom:clamp(40px,8vh,90px); z-index:5; pointer-events:none; }
-.vocab-readout .lbl{ font-family:var(--mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:8px; }
-.vocab-readout .val{ font-family:var(--serif); font-weight:300; font-size:clamp(28px,3.6vw,52px); letter-spacing:-.02em; color:var(--focus); transition:opacity .25s ease; line-height:1; }
+.vocab-readout .lbl{ font-size:12.5px; color:var(--ink-faint); margin-bottom:8px; }
+.vocab-readout .val{ font-weight:700; font-size:clamp(28px,3.6vw,50px); letter-spacing:-.03em; color:var(--focus); transition:opacity .25s ease; line-height:1; }
 
-.vocab-hint{ position:absolute; right:clamp(24px,5vw,72px); bottom:clamp(40px,8vh,90px); z-index:5; pointer-events:none; font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+.vocab-hint{ position:absolute; right:clamp(24px,5vw,72px); bottom:clamp(40px,8vh,90px); z-index:5; pointer-events:none; font-size:12.5px; color:var(--ink-faint); }
 
-@media (max-width:820px){ .vtile{ width:236px; height:292px; left:-118px; top:-146px; } .vocab{ height:280vh; } }
+@media (max-width:820px){
+  .vtile{ width:236px; height:292px; left:-118px; top:-146px; }
+  .vocab{ height:280vh; }
+  /* spiral.js halves the helix radius here; a tighter perspective keeps the
+     depth from flattening out now that the tiles travel less in z */
+  .vstage{ perspective:900px; }
+  .vocab-head{ top:clamp(84px,12vh,120px); left:22px; right:22px; max-width:none; }
+  .vocab-readout{ left:22px; bottom:clamp(28px,5vh,56px); }
+  .vocab-hint{ right:22px; bottom:clamp(28px,5vh,56px); }
+}
 @media (prefers-reduced-motion: reduce){ .vocab{ height:100vh; } }
-
-/* ══════════════════════════════════════════════════════════════
-   Remove decorative drop-caps and stat divider rules — the big
-   floated first-letters (the About "I" especially) and the
-   vertical column rules read as stray vertical lines.
-   ══════════════════════════════════════════════════════════════ */
-.about-text .lead span.drop{ float:none; font-size:inherit; line-height:inherit; font-style:normal; color:inherit; padding:0; }
-.d-copy p:first-of-type::first-letter{ float:none; font-size:inherit; line-height:inherit; padding:0; color:inherit; font-weight:inherit; }
-.d-stat + .d-stat{ border-left:none; }

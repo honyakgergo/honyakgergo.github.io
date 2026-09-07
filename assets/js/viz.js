@@ -1,10 +1,10 @@
 /* ══════════════════════════════════════════════════════════════
-   Bespoke per-project SVG icon for home page cards. DARK EDITION —
+   Bespoke per-project SVG icon for home page cards. DARK EDITION,
    identical to ../../assets/js/viz.js except the colour constants
    are tuned for the dark theme (light strokes, lifted blue accent).
 
    Cases: equity (SwingLab) / graph (GNN) / waveform (Sentify) /
-   candles (money_dashboard) / roots (NPEC) / smile (Prosperity)
+   candles (volatility_dashboard) / roots (NPEC) / smile (Prosperity)
    ══════════════════════════════════════════════════════════════ */
 
 const C_INK = '#e6e7ea', C_SAGE = '#5b93ff', C_OCHRE = '#5b93ff', C_RUST = '#5b93ff', C_PAPER = '#16181c';
@@ -85,7 +85,7 @@ function viz(kind, tone, cap) {
       </svg>`;
     }
 
-    /* ── money_dashboard: OHLC candles + a regime threshold line ── */
+    /* ── volatility_dashboard: OHLC candles + a regime threshold line ── */
     case 'candles': {
       const candles = [
         [40,120,90,150,'up'],[70,105,60,130,'up'],[100,140,95,160,'dn'],[130,110,80,145,'up'],

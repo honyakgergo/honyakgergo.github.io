@@ -1,12 +1,12 @@
 /* ══════════════════════════════════════════════════════════════
-   AMBIENT — optional cool colour grading over the dark theme.
+   AMBIENT, optional cool colour grading over the dark theme.
    Additive & non-destructive. Loaded AFTER theme-dark.css.
 
    It adds two fixed, viewport-wide layers that sit above the page
    surfaces but below the nav:
      · a soft cool wash (blue up top, a whisper of indigo low-right,
        a faint sheen along the very top edge) so the page isn't a
-       flat black — the "light" stays put while content scrolls past.
+       flat black, the "light" stays put while content scrolls past.
      · fine film grain, which breaks up gradient banding and gives
        the whole thing a filmic, non-plastic texture.
 
