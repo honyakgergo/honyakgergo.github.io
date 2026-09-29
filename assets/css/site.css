@@ -309,6 +309,8 @@ em, i, cite, dfn, var, address { font-style: normal; }
 .about-side .k { font-size: 13px; font-weight: 500; color: var(--ink-faint); padding-top: 2px; }
 .about-side .v { font-size: 15px; color: var(--ink); line-height: 1.5; }
 .about-side .v em { color: var(--blue); font-weight: 500; }
+.about-side .v .about-link { color: var(--blue); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, var(--blue) 45%, transparent); transition: text-decoration-color .2s; }
+.about-side .v .about-link:hover { text-decoration-color: var(--blue); }
 @media (max-width: 1024px) { .about { grid-template-columns: 1fr; gap: 48px; } .about-photo-col { position: static; max-width: 380px; } }
 
 /* ─── CTA + Footer ──────────────────────────── */
