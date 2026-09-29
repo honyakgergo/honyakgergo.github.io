@@ -1,7 +1,7 @@
 /* ══════════════════════════════════════════════════════════════
    Skill spiral, vertical 3D helix of the stack, scroll-scrubbed.
    Self-initialising. Expects in the DOM:
-     section#vocab  (tall, 300vh)  →  div#vocabStage (fixed)  →  div#vhelix
+     section#vocab  (tall, 250vh)  →  div#vocabStage (fixed)  →  div#vhelix
      div#vFocusName (the "in focus" readout)
    The fixed stage is shown only while #vocab owns the viewport;
    the following .vocab-after wipes over it on exit.
@@ -19,11 +19,9 @@
     { name: "pandas",       slug: "pandas",         accent: "#9c86b8" },  // muted plum
     { name: "PyTorch",      slug: "pytorch",        accent: "#cd7a56" },  // terracotta
     { name: "scikit-learn", slug: "scikitlearn",    accent: "#cb9a5c" },  // ochre
-    { name: "Hugging Face", slug: "huggingface",    accent: "#cbb46e" },  // muted gold / wheat
     { name: "TensorFlow",   slug: "tensorflow",     accent: "#cf8850" },  // burnt amber
     { name: "FastAPI",      slug: "fastapi",        accent: "#6faa9b" },  // sage teal
     { name: "React",        slug: "react",          accent: "#78a9bd" },  // dusty aqua
-    { name: "Streamlit",    slug: "streamlit",      accent: "#c56f66" },  // brick rose
     { name: "Docker",       slug: "docker",         accent: "#6d92bd" },  // slate blue
     { name: "GCP",          slug: "googlecloud",    accent: "#8399c6" },  // soft cornflower
     { name: "Azure",        icon: AZURE,            accent: "#618fb5" },  // steel blue

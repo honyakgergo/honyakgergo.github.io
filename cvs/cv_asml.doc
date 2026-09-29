@@ -1,0 +1,73 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="utf-8">
+<style>
+@page { margin: 0.5in 0.5in 0.5in 0.5in; }
+body { font-family: Calibri, sans-serif; font-size: 9.5pt; margin: 0; padding: 0; line-height: 1.15; }
+h1 { font-size: 14pt; margin: 0 0 1px 0; }
+h2 { font-size: 10pt; margin: 6px 0 2px 0; border-bottom: 1px solid #000; padding-bottom: 1px; text-transform: uppercase; }
+p { margin: 0; }
+.contact { font-size: 9pt; margin: 0 0 2px 0; }
+.project-title { font-weight: bold; margin: 4px 0 0 0; }
+ul { margin: 1px 0 2px 0; padding-left: 18px; }
+li { margin: 0; }
+table { width: 100%; border-collapse: collapse; }
+td { border: none; padding: 0; vertical-align: top; }
+</style></head>
+<body>
+
+<h1>Gergő Honyák</h1>
+<p class="contact">honyakgergo7@gmail.com | linkedin | github</p>
+
+<h2>Education</h2>
+<table><tr><td><b>Breda University of Applied Sciences</b></td><td align="right"><i>Second Year Student</i></td></tr>
+<tr><td>Bachelor of Applied Data Science and AI</td><td align="right">GPA 4.0</td></tr></table>
+<table><tr><td><b>Eindhoven University of Technology (TU/e)</b></td><td align="right"><i>Starting Sep 2026</i></td></tr>
+<tr><td>Pre-Master in Data Science. Seeking graduation internship from Jan 2027</td><td></td></tr></table>
+<p>Spoken Languages: English C1, German B2, Dutch (learning), Hungarian (native)</p>
+
+<h2>Technical Skills</h2>
+<ul>
+<li><b>Programming:</b> Python, JavaScript, SQL</li>
+<li><b>Data &amp; Architecture:</b> Database modeling, REST API design, system architecture analysis, data pipeline design</li>
+<li><b>ML / Engineering:</b> PyTorch, Scikit-learn, pandas, NumPy, React, MLflow, Apache Airflow</li>
+<li><b>Tooling:</b> Azure DevOps, FastAPI, Streamlit, MinIO, Portainer</li>
+</ul>
+
+<h2>Experience</h2>
+<table><tr><td><b>Part-time AI Engineer Intern</b></td><td align="right"><i>June 2025 – Present</i></td></tr></table>
+<ul>
+<li>Analysed system requirements and designed the architecture for a Retrieval-Augmented Generation pipeline, including database layer, retrieval logic, and API structure</li>
+<li>Built and deployed a full-stack application (FastAPI + JavaScript) on Google Cloud Run and Firebase, making deployment and infrastructure decisions for scalability and security</li>
+<li>Integrated proxy systems in collaboration with senior engineers, identifying architectural constraints and proposing solutions</li>
+<li>Presented technical demos and documented system design decisions for stakeholder review</li>
+</ul>
+
+<h2>Relevant Projects</h2>
+<p class="project-title">Bank RAG System: Architectural Analysis &amp; Proposal (AI Consultancy)</p>
+<ul>
+<li>Assessed the feasibility of an on-premises RAG chatbot for a financial institution, analysing regulatory constraints (GDPR, EU AI Act, DORA, NIS2, EBA) and their impact on system architecture</li>
+<li>Evaluated deployment tradeoffs (on-prem vs. cloud), database and retrieval layer design, and data flow modeling under compliance requirements</li>
+<li>Delivered a structured technical proposal and presented architectural recommendations to business stakeholders</li>
+</ul>
+<p class="project-title">OCR &amp; LLM Receipt Extraction: Prototype (AI Consultancy)</p>
+<ul>
+<li>Developed a prototype data pipeline to extract structured information from low-quality scanned receipts using OCR and language models</li>
+<li>Designed the data flow from unstructured input to structured output, evaluating processing stages and modeling decisions</li>
+<li>Delivered a working proof of concept demonstrating feasibility and reduction of manual data entry</li>
+</ul>
+<p class="project-title">Waste Classifier: Full-Stack Deep Learning Application (Flask, Django, GCP)</p>
+<ul>
+<li>Built and deployed an end-to-end image classification app with MobileNet transfer learning (97.7% test accuracy)</li>
+<li>Designed REST API, user authentication, and containerised cloud deployment on Google Cloud Platform</li>
+</ul>
+<p class="project-title">Quantitative Finance Research</p>
+<ul>
+<li>Developed a GNN-based equity prediction model (PyTorch) and a multi-strategy backtesting platform in Python</li>
+<li>Designed an SQL caching layer to optimise data retrieval and reduce pipeline runtime</li>
+</ul>
+<p class="project-title">NPEC: Netherlands Plant Eco-phenotyping Centre</p>
+<ul>
+<li>Built a U-Net predictor for root growth and applied RL to optimise automated inoculation in simulation</li>
+</ul>
+
+</body></html>

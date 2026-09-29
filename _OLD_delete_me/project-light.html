@@ -1,27 +1,23 @@
 <!DOCTYPE html>
-<html lang="en" class="lift">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <title>Project · Gergő Honyák</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="description" content="Project write-up from Gergő Honyák's portfolio: what it does, how it was built, and what the numbers say." />
-<meta name="theme-color" content="#1a1d24" />
-<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
 <meta name="view-transition" content="same-origin" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400;1,14..32,500;1,14..32,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-<link rel="stylesheet" href="/assets/css/site.css" />
-<link rel="stylesheet" href="/assets/css/theme-dark.css?v=3" />
+<link rel="stylesheet" href="assets/css/site.css" />
 </head>
 <body>
 
 <nav class="nav">
-  <a href="/archive/" class="nav-back" data-back>
-    <span class="nb-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M14.5 5.5L8 12l6.5 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-    <span class="nb-label">Back</span>
+  <a href="archive.html" class="nav-back">
+    <svg viewBox="0 0 22 8" fill="none"><path d="M0 4H21M21 4L17 1M21 4L17 7" stroke="currentColor" stroke-width="1.2"/></svg>
+    Archive
   </a>
   <span class="brand">Gergő Honyák</span>
   <span class="eyebrow" id="navEyebrow"></span>
@@ -29,27 +25,26 @@
 
 <div id="app"><!-- injected --></div>
 
-<script src="/assets/js/nav-back.js" defer></script>
-<script src="/assets/js/projects-data.js?v=3"></script>
+<script src="assets/js/projects-data.js"></script>
 <script>
-/* ─── Sentify architecture diagram, native SVG matching the dark tokens ── */
+/* ─── Sentify architecture diagram, native SVG matching site tokens ── */
 function sentifyDiagram() {
   return `
   <svg viewBox="0 0 900 460" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:'JetBrains Mono',monospace;">
     <style>
-      .box { fill: #16181c; stroke: rgba(255,255,255,0.30); stroke-width: 1.2; }
-      .box-accent { fill: #5b93ff; stroke: #5b93ff; }
-      .box-data { fill: #10203a; stroke: #5b93ff; stroke-width: 1; }
-      .lbl { font-size: 12px; fill: #e6e7ea; }
-      .lbl-sub { font-size: 9.5px; fill: #8a8d97; }
-      .lbl-accent { font-size: 12px; fill: #0b0c0e; }
-      .edge { stroke: rgba(255,255,255,0.28); stroke-width: 1; fill: none; }
-      .edge-txt { font-size: 8.5px; fill: #8a8d97; }
+      .box { fill: #fff; stroke: #1d1d1f; stroke-width: 1.2; }
+      .box-accent { fill: #3b82f6; stroke: #3b82f6; }
+      .box-data { fill: #eef3fb; stroke: #3b82f6; stroke-width: 1; }
+      .lbl { font-size: 12px; fill: #1d1d1f; }
+      .lbl-sub { font-size: 9.5px; fill: #6e6e73; }
+      .lbl-accent { font-size: 12px; fill: #fff; }
+      .edge { stroke: #86868b; stroke-width: 1; fill: none; }
+      .edge-txt { font-size: 8.5px; fill: #6e6e73; }
     </style>
 
     <!-- Docker Compose boundary -->
-    <rect x="40" y="30" width="520" height="330" rx="8" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 4"/>
-    <text x="56" y="52" class="lbl-sub">DOCKER COMPOSE · PORTAINER HOST</text>
+    <rect x="40" y="30" width="520" height="330" rx="8" fill="none" stroke="#e8e8ed" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <text x="56" y="52" class="lbl-sub">DOCKER COMPOSE — PORTAINER HOST</text>
 
     <rect x="60" y="70" width="130" height="56" rx="6" class="box"/>
     <text x="125" y="94" text-anchor="middle" class="lbl">frontend</text>
@@ -65,7 +60,7 @@ function sentifyDiagram() {
 
     <rect x="220" y="170" width="150" height="56" rx="6" class="box-accent"/>
     <text x="295" y="194" text-anchor="middle" class="lbl-accent">mlflow</text>
-    <text x="295" y="210" text-anchor="middle" class="lbl-sub" fill="rgba(11,12,14,0.75)">tracking + registry</text>
+    <text x="295" y="210" text-anchor="middle" class="lbl-sub" fill="rgba(255,255,255,0.75)">tracking + registry</text>
 
     <rect x="60" y="270" width="140" height="56" rx="6" class="box-data"/>
     <text x="130" y="294" text-anchor="middle" class="lbl">postgres</text>
@@ -124,16 +119,15 @@ function exhibitMarkup(e) {
     return `<div class="exhibit-frame diagram">${sentifyDiagram()}</div><div class="exhibit-cap">${e.caption}</div>`;
   }
   if (e.placeholder) {
-    return `<div class="exhibit-frame placeholder"><span>Awaiting exhibit, image to be added</span></div><div class="exhibit-cap">${e.caption}</div>`;
+    return `<div class="exhibit-frame placeholder"><span>Awaiting exhibit — image to be added</span></div><div class="exhibit-cap">${e.caption}</div>`;
   }
-  const _src = e.src ? '/' + e.src : `/assets/images/${p.id}/${e.img}`;
-  return `<div class="exhibit-frame"><img src="${_src}" alt="${e.caption}" loading="lazy" /></div><div class="exhibit-cap">${e.caption}</div>`;
+  return `<div class="exhibit-frame"><img src="assets/images/${p.id}/${e.img}" alt="${e.caption}" loading="lazy" /></div><div class="exhibit-cap">${e.caption}</div>`;
 }
 
 document.getElementById('app').innerHTML = `
   <div class="d-hero">
     <span class="d-ghost" style="view-transition-name: ghost-${p.id};">${p.n}</span>
-    <div class="d-eyebrow"><span class="dot"></span>${CAT_LABEL[p.cat]} · ${p.year}</div>
+    <div class="d-eyebrow"><span class="dot"></span>${CAT_LABEL[p.cat]} — ${p.year}</div>
     <h1 class="d-title" style="view-transition-name: title-${p.id};">${p.title} <em>${p.em}</em></h1>
     <div class="d-meta-row">
       <span>${p.role}</span><span>${p.type}</span><span>${p.status}</span>
@@ -154,21 +148,11 @@ document.getElementById('app').innerHTML = `
         <span class="status-badge">${p.status}</span>
       </div>
       <div class="d-copy">${p.copy.map(t => `<p>${t}</p>`).join('')}</div>
-      ${p.repo ? `<a class="d-repo" href="${p.repo}" target="_blank" rel="noopener">
-        <span class="d-repo-mark" aria-hidden="true">
-          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52.01-.53.65-.01 1.11.6 1.27.85.74 1.24 1.92.89 2.39.68.07-.53.28-.89.51-1.09-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.07-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.15 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A7.99 7.99 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
-        </span>
-        <span class="d-repo-txt">
-          <b>Read the longer write-up on GitHub</b>
-          <small>The full README for this project, with the code and figures behind it</small>
-        </span>
-        <span class="d-repo-arr" aria-hidden="true">↗</span>
-      </a>` : ''}
     </div>
   </div>
   <div class="d-nav">
-    <a href="/project/?id=${prev.id}"><small>← Previous</small>${prev.title}</a>
-    <a href="/project/?id=${next.id}" class="next"><small>Next →</small>${next.title}</a>
+    <a href="project.html?id=${prev.id}"><small>← Previous</small>${prev.title}</a>
+    <a href="project.html?id=${next.id}" class="next"><small>Next →</small>${next.title}</a>
   </div>
 `;
 </script>

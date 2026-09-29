@@ -12,10 +12,11 @@
   const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
   const lerp = (a, b, t) => a + (b - a) * t;
 
-  /* muted, earthy accent per project (matches the spiral palette) */
+  /* glow per project, the dominant hue of its card image (same values as
+     ACCENT in archive/index.html, re-derive both when a cover changes) */
   const ACCENT = {
-    'swinglab': '#6d92bd', 'gnn': '#8f7fb0', 'sentify': '#6faa9b',
-    'volatility-dashboard': '#7f9e6b', 'prosperity': '#c0787f', 'npec': '#c39a5c',
+    'swinglab': '#7fdb9d', 'gnn': '#7fb6db', 'sentify': '#dbc56f',
+    'volatility-dashboard': '#53dbcf', 'prosperity': '#538adb', 'npec': '#9aa9c2',
   };
   /* short, punchy readout line per project */
   const TAG = {
@@ -42,10 +43,11 @@
     tag: TAG[p.id] || p.type, accent: ACCENT[p.id] || '#6d92bd',
     keys: KEYS[p.id] || (p.tags || []).slice(0, 3),
     tech: (p.tags || []).slice(0, 4), href: `/project/?id=${p.id}`,
+    cover: p.cover,
   }));
   CARDS.push({
     id: 'archive', num: '( all )', name: 'More projects', em: '',
-    tag: 'All eleven projects, in one place', accent: '#7b8bb0',
+    tag: 'All twelve projects, in one place', accent: '#7b8bb0',
     img: '', href: '/archive/', more: true,
   });
 
@@ -69,6 +71,18 @@
            <span class="more-t">More projects</span>
            <span class="more-s">See every project →</span>
          </div></div>`;
+    } else if (c.cover) {
+      /* a picture of the work, shaded down at the foot so the title reads */
+      el.innerHTML =
+        `<div class="fface has-cover" style="--a:${c.accent}">
+           <img class="f-cover" src="${c.cover}" alt="" loading="lazy" decoding="async" />
+           <span class="f-shade" aria-hidden="true"></span>
+           <div class="fmeta">
+             <span class="ft">${c.name}${c.em ? ` <em>${c.em}</em>` : ''}</span>
+             <div class="f-keys">${(c.keys || []).map(w => `<span>${w}</span>`).join('')}</div>
+             ${(c.tech || []).length ? `<div class="f-tech">${c.tech.join(' · ')}</div>` : ''}
+           </div>
+         </div>`;
     } else {
       el.innerHTML =
         `<div class="fface" style="--a:${c.accent}; background:

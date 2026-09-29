@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Featured Work — coverflow demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;1,14..32,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#08090c; --ink:#f2f2f5; --ink-2:#c7c9d1; --ink-mute:#8a8d97; --ink-faint:#5f636d;
+    --serif:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+    --accent:#5b93ff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    background:var(--paper); color:var(--ink); font-family:var(--serif); font-weight:300;
+    -webkit-font-smoothing:antialiased; overflow:hidden;
+  }
+
+  /* ── ambient background wash (two crossfading layers) ── */
+  .wash{ position:fixed; inset:-12%; z-index:0; opacity:0; transition:opacity 1.1s ease; will-change:opacity; background-size:cover; background-position:center; }
+  .wash.blur{ filter:blur(90px) saturate(1.6) brightness(.62); transform:scale(1.15); }
+  .washbase{ position:fixed; inset:0; z-index:0; background:radial-gradient(ellipse 90% 70% at 50% 0%, rgba(255,255,255,.03), transparent 60%), var(--paper); }
+  .dye{ position:fixed; inset:0; z-index:1; pointer-events:none; }
+  .grain{ position:fixed; inset:0; z-index:3; pointer-events:none; opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E"); mix-blend-mode:overlay; }
+  .vignette{ position:fixed; inset:0; z-index:2; pointer-events:none;
+    background:radial-gradient(ellipse 70% 60% at 50% 42%, transparent 40%, rgba(0,0,0,.55) 100%); }
+
+  /* ── top bar ── */
+  .bar{ position:fixed; top:0; left:0; right:0; z-index:20; display:flex; justify-content:space-between; align-items:center;
+    padding:22px 34px; font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-mute); }
+  .bar .brand{ font-family:var(--serif); font-style:italic; font-size:19px; letter-spacing:-.01em; text-transform:none; color:var(--ink); }
+  .bar .demo-tag{ color:var(--ink-faint); }
+
+  /* ── section heading ── */
+  .head{ position:fixed; top:clamp(84px,12vh,120px); left:0; right:0; z-index:15; text-align:center; pointer-events:none; }
+  .head .label{ font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:14px; }
+  .head h1{ font-family:var(--serif); font-weight:300; font-size:clamp(30px,4.4vw,54px); line-height:1; letter-spacing:-.025em; }
+  .head h1 em{ font-style:italic; color:var(--accent); transition:color .8s ease; }
+
+  /* ── coverflow stage ── */
+  .stage{ position:absolute; inset:0; z-index:10; perspective:1500px; perspective-origin:50% 44%; }
+  .track{ position:absolute; left:50%; top:50%; transform-style:preserve-3d; }
+  .card{
+    position:absolute; left:0; top:0;
+    --cw:clamp(360px,40vw,600px);
+    width:var(--cw); aspect-ratio:3/2;
+    margin-left:calc(var(--cw) / -2);
+    margin-top:calc(var(--cw) / 3 * -1);
+    border-radius:16px; overflow:hidden; cursor:pointer;
+    transition:transform .62s cubic-bezier(.4,.62,.16,1), opacity .55s ease, filter .55s ease, box-shadow .55s ease;
+    transform-style:preserve-3d; will-change:transform;
+    border:1px solid rgba(255,255,255,.10);
+    box-shadow:0 40px 90px -40px rgba(0,0,0,.9);
+  }
+  .card .face{ position:absolute; inset:0; }
+  .card .face img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+  .card .scrim{ position:absolute; inset:0; background:linear-gradient(180deg, transparent 40%, rgba(0,0,0,.15) 62%, rgba(0,0,0,.82) 100%); }
+  .card .meta{ position:absolute; left:0; right:0; bottom:0; padding:20px 22px; z-index:2; }
+  .card .meta .n{ font-family:var(--mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.6); margin-bottom:7px; }
+  .card .meta .t{ font-family:var(--serif); font-weight:400; font-size:21px; line-height:1.08; letter-spacing:-.01em; color:#fff; }
+  .card.focused{ border-color:rgba(255,255,255,.22); }
+
+  /* placeholder face (shown until a real image is dropped in) */
+  .card .ph{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+  .card .ph svg{ width:56%; height:56%; opacity:.9; }
+  .card .ph .no{ position:absolute; top:18px; left:20px; font-family:var(--mono); font-size:10px; letter-spacing:.18em; color:rgba(255,255,255,.65); }
+  .card .ph .await{ position:absolute; top:18px; right:20px; font-family:var(--mono); font-size:8.5px; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.4); }
+
+  /* ── readout under the stage ── */
+  .readout{ position:fixed; left:0; right:0; bottom:clamp(74px,12vh,120px); z-index:15; text-align:center; pointer-events:none; }
+  .readout .rtag{ font-family:var(--serif); font-style:italic; font-size:clamp(15px,1.6vw,20px); color:var(--ink-2); transition:opacity .3s ease; }
+  .readout .cta{ margin-top:16px; display:inline-flex; align-items:center; gap:10px; pointer-events:auto;
+    font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink);
+    padding:11px 20px; border:1px solid rgba(255,255,255,.16); border-radius:100px; background:rgba(255,255,255,.02);
+    transition:border-color .4s ease, background .4s ease, transform .4s ease; cursor:pointer; }
+  .readout .cta:hover{ transform:translateY(-2px); }
+  .readout .cta .dotc{ width:6px; height:6px; border-radius:50%; background:var(--accent); transition:background .6s ease; box-shadow:0 0 12px var(--accent); }
+
+  /* ── controls ── */
+  .nav-btn{ position:fixed; top:54%; transform:translateY(-50%); z-index:18; width:52px; height:52px; border-radius:50%;
+    border:1px solid rgba(255,255,255,.14); background:rgba(10,12,16,.5); backdrop-filter:blur(8px);
+    color:var(--ink); display:flex; align-items:center; justify-content:center; cursor:pointer;
+    transition:border-color .3s ease, background .3s ease, transform .3s ease; }
+  .nav-btn:hover{ border-color:var(--accent); background:rgba(10,12,16,.8); }
+  .nav-btn.prev{ left:clamp(16px,4vw,54px); }
+  .nav-btn.next{ right:clamp(16px,4vw,54px); }
+  .nav-btn svg{ width:20px; height:20px; }
+
+  .dots{ position:fixed; left:0; right:0; bottom:34px; z-index:18; display:flex; justify-content:center; gap:10px; }
+  .dots .d{ width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.2); cursor:pointer; transition:all .4s ease; }
+  .dots .d.on{ width:24px; border-radius:4px; background:var(--accent); }
+
+  .hint{ position:fixed; left:0; right:0; bottom:12px; z-index:18; text-align:center; font-family:var(--mono); font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint); }
+</style>
+</head>
+<body>
+
+<div class="washbase"></div>
+<div class="wash" id="washA"></div>
+<div class="wash" id="washB"></div>
+<canvas class="dye" id="dye"></canvas>
+<div class="vignette"></div>
+<div class="grain"></div>
+
+<div class="bar">
+  <span class="brand">Gergő Honyák</span>
+  <span class="demo-tag">Featured — coverflow demo</span>
+</div>
+
+<div class="head">
+  <div class="label">Projects I'm most proud of</div>
+  <h1>Different domains, <em id="hEm">one thread</em>.</h1>
+</div>
+
+<div class="stage" id="stage">
+  <div class="track" id="track"></div>
+</div>
+
+<button class="nav-btn prev" id="prev" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+<button class="nav-btn next" id="next" aria-label="Next"><svg viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+
+<div class="readout">
+  <div class="rtag" id="rtag">Quantitative research &amp; trading platform</div>
+  <div class="cta" id="cta"><span class="dotc"></span><span id="ctaLabel">View SwingLab</span> →</div>
+</div>
+
+<div class="dots" id="dots"></div>
+<div class="hint">scroll · drag · arrow keys — click a side card to bring it forward</div>
+
+<script>
+/* ─── project data — drop real images at the img path to light them up ─── */
+const PROJECTS = [
+  { id:'swinglab',   n:'01', name:'SwingLab',        tag:'Quantitative research & trading platform', accent:'#6d92bd', img:'assets/images/featured/swinglab.png' },  // slate blue
+  { id:'gnn',        n:'02', name:'GNN Alpha',       tag:'Graph neural nets for equity factors',      accent:'#8f7fb0', img:'assets/images/featured/gnn.png' },        // muted plum
+  { id:'sentify',    n:'03', name:'Sentify',         tag:'Media emotion classifier · full MLOps',     accent:'#6faa9b', img:'assets/images/featured/sentify.png' },    // sage teal
+  { id:'dashboard',  n:'04', name:'Money Dashboard', tag:'Live market cockpit, driven by the clock',  accent:'#7f9e6b', img:'assets/images/featured/dashboard.png' },  // muted olive
+  { id:'npec',       n:'05', name:'NPEC Roots',      tag:'U-Net → Dijkstra → robotic arm',            accent:'#c39a5c', img:'assets/images/featured/npec.png' },       // ochre
+  { id:'prosperity', n:'06', name:'IMC Prosperity',  tag:'#223 / 18,800 · voucher IV smile',          accent:'#c0787f', img:'assets/images/featured/prosperity.png' }, // dusty rose
+];
+const N = PROJECTS.length;
+let current = 0;
+
+const track = document.getElementById('track');
+const rtag  = document.getElementById('rtag');
+const hEm   = document.getElementById('hEm');
+const ctaLabel = document.getElementById('ctaLabel');
+const dotsWrap = document.getElementById('dots');
+
+/* premium placeholder art (until real images exist): layered accent glows */
+function placeholder(p){
+  return `
+  <div class="ph" style="background:
+      radial-gradient(120% 90% at 30% 20%, ${p.accent}55, transparent 55%),
+      radial-gradient(120% 120% at 80% 90%, ${p.accent}33, transparent 60%),
+      linear-gradient(160deg, #14161c, #0a0b0f);">
+    <span class="no">${p.n}</span>
+    <span class="await">image slot</span>
+    <svg viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="30" stroke="${p.accent}" stroke-width="1" opacity="0.7"/>
+      <circle cx="50" cy="50" r="20" stroke="${p.accent}" stroke-width="1" opacity="0.5"/>
+      <path d="M20 62 L38 48 L52 56 L68 36 L82 44" stroke="${p.accent}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>`;
+}
+
+/* build cards + dots */
+PROJECTS.forEach((p, i) => {
+  const el = document.createElement('div');
+  el.className = 'card';
+  el.innerHTML = `
+    <div class="face">
+      ${placeholder(p)}
+      <img alt="" />
+      <div class="scrim"></div>
+      <div class="meta"><div class="n">(${p.n}) · Featured</div><div class="t">${p.name}</div></div>
+    </div>`;
+  const img = el.querySelector('img');
+  img.style.opacity = '0';
+  img.onload = () => { img.style.opacity = '1'; p._loaded = true; if (i === current) setWash(p); };
+  img.onerror = () => { img.remove(); };      // fall back to the placeholder art
+  img.src = p.img;
+  el.addEventListener('click', () => { if (i === current) openProject(p); else goTo(i); });
+  p.el = el;
+  track.appendChild(el);
+
+  const d = document.createElement('div');
+  d.className = 'd';
+  d.addEventListener('click', () => goTo(i));
+  p.dot = d;
+  dotsWrap.appendChild(d);
+});
+
+/* ─── background wash crossfade ─── */
+let washTop = document.getElementById('washA');
+let washBot = document.getElementById('washB');
+function setWash(p){
+  const layer = washBot;
+  if (p._loaded){
+    layer.style.backgroundImage = `url("${p.img}")`;
+    layer.classList.add('blur');
+  } else {
+    layer.style.backgroundImage =
+      `radial-gradient(circle at 50% 34%, ${p.accent} 0%, ${p.accent}22 34%, transparent 62%)`;
+    layer.classList.remove('blur');
+  }
+  layer.style.opacity = '1';
+  washTop.style.opacity = '0';
+  const t = washTop; washTop = washBot; washBot = t;   // swap
+}
+
+/* ─── layout ─── */
+function update(){
+  const spacing = Math.min(window.innerWidth * 0.28, 400);
+  PROJECTS.forEach((p, i) => {
+    let o = ((i - current) % N + N) % N;
+    if (o > N / 2) o -= N;
+    const ao = Math.abs(o);
+    const x   = o * spacing;
+    const rotY = -o * 15;
+    const rotX = o === 0 ? 0 : 42;         // focused faces you; only the sides lie back
+    const tz  = -ao * 150;
+    const y   = ao * 18;                   // reclined ones settle down + back
+    const sc = o === 0 ? 1 : Math.max(0.62, 0.86 - (ao - 1) * 0.12);
+    const op = ao > 2.5 ? 0 : (o === 0 ? 1 : Math.max(0.22, 0.62 - (ao - 1) * 0.28));
+    p.el.style.transform = `translateX(${x}px) translateY(${y}px) translateZ(${tz}px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(${sc})`;
+    p.el.style.opacity = op;
+    p.el.style.zIndex = String(120 - ao * 10);
+    p.el.style.filter = o === 0 ? 'none' : 'brightness(.6) saturate(.8)';
+    p.el.style.pointerEvents = ao > 2.5 ? 'none' : 'auto';
+    p.el.classList.toggle('focused', o === 0);
+    p.el.style.boxShadow = o === 0
+      ? `0 50px 110px -36px rgba(0,0,0,.95), 0 0 0 1px ${p.accent}66, 0 30px 90px -30px ${p.accent}70`
+      : '0 40px 90px -44px rgba(0,0,0,.9)';
+    p.dot.classList.toggle('on', i === current);
+  });
+  const p = PROJECTS[current];
+  document.documentElement.style.setProperty('--accent', p.accent);
+  rtag.style.opacity = '0';
+  setTimeout(() => { rtag.textContent = p.tag; rtag.style.opacity = '1'; }, 160);
+  ctaLabel.textContent = 'View ' + p.name;
+  if (typeof dyeSetColor === 'function') dyeSetColor(p.accent);
+  setWash(p);
+}
+
+function goTo(i){ current = ((i % N) + N) % N; update(); }
+function next(){ goTo(current + 1); }
+function prev(){ goTo(current - 1); }
+function openProject(p){
+  const c = p.el;
+  c.animate([{ transform: c.style.transform }, { transform: c.style.transform + ' scale(1.04)' }, { transform: c.style.transform }], { duration: 340, easing: 'ease-out' });
+  /* on the real site this would navigate: location.href = 'project.html?id=' + p.id; */
+}
+
+/* ─── controls ─── */
+document.getElementById('next').addEventListener('click', next);
+document.getElementById('prev').addEventListener('click', prev);
+addEventListener('keydown', e => { if (e.key === 'ArrowRight') next(); if (e.key === 'ArrowLeft') prev(); });
+
+let wheelLock = false;
+addEventListener('wheel', e => {
+  if (wheelLock) return;
+  if (Math.abs(e.deltaY) < 8 && Math.abs(e.deltaX) < 8) return;
+  wheelLock = true;
+  (e.deltaY > 0 || e.deltaX > 0) ? next() : prev();
+  setTimeout(() => wheelLock = false, 420);
+}, { passive: true });
+
+let dragX = null;
+addEventListener('pointerdown', e => dragX = e.clientX);
+addEventListener('pointerup', e => {
+  if (dragX === null) return;
+  const dx = e.clientX - dragX; dragX = null;
+  if (Math.abs(dx) > 55) (dx < 0 ? next() : prev());
+});
+
+/* ─── cursor dye trail — lightweight ink-in-water (no fluid sim) ─── */
+const dye = document.getElementById('dye');
+const dctx = dye.getContext('2d');
+let DW = 0, DH = 0;
+function sizeDye(){ DW = dye.width = innerWidth; DH = dye.height = innerHeight; }
+sizeDye();
+addEventListener('resize', sizeDye);
+
+let mx = innerWidth / 2, my = innerHeight / 2, moved = false;
+addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; moved = true; });
+
+function hexToRgb(h){ const n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+let dyeRGB = hexToRgb('#6d92bd');
+function dyeSetColor(hex){ dyeRGB = hexToRgb(hex); }
+
+/* blobs chase the cursor with different lag → they smear into each other */
+const followers = [
+  { x: mx, y: my, ease: 0.06, r: 80 },
+  { x: mx, y: my, ease: 0.035, r: 130 },
+  { x: mx, y: my, ease: 0.02, r: 180 },
+];
+const FADE = 0.085;   // higher = shorter trail (wipes faster); lower = longer smear
+
+function dyeFrame(){
+  // trail persistence: fade the previous frame toward the dark base
+  dctx.globalCompositeOperation = 'source-over';
+  dctx.fillStyle = `rgba(8,9,12,${FADE})`;
+  dctx.fillRect(0, 0, DW, DH);
+
+  if (moved){
+    dctx.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < followers.length; i++){
+      const p = followers[i];
+      const px = p.x, py = p.y;
+      p.x += (mx - p.x) * p.ease;
+      p.y += (my - p.y) * p.ease;
+      const vx = p.x - px, vy = p.y - py;
+      const sp = Math.min(Math.hypot(vx, vy), 70);
+      const stretch = 1 + sp / 34;                 // faster motion → longer smear
+      const ang = Math.atan2(vy, vx);
+      const a = 0.10 - i * 0.025;                   // inner blob brightest
+      dctx.save();
+      dctx.translate(p.x, p.y);
+      dctx.rotate(ang);
+      dctx.scale(stretch, 1 / Math.sqrt(stretch));  // elongate along motion
+      const g = dctx.createRadialGradient(0, 0, 0, 0, 0, p.r);
+      g.addColorStop(0, `rgba(${dyeRGB[0]},${dyeRGB[1]},${dyeRGB[2]},${a})`);
+      g.addColorStop(1, `rgba(${dyeRGB[0]},${dyeRGB[1]},${dyeRGB[2]},0)`);
+      dctx.fillStyle = g;
+      dctx.beginPath(); dctx.arc(0, 0, p.r, 0, Math.PI * 2); dctx.fill();
+      dctx.restore();
+    }
+    dctx.globalCompositeOperation = 'source-over';
+  }
+  requestAnimationFrame(dyeFrame);
+}
+requestAnimationFrame(dyeFrame);
+
+addEventListener('resize', update);
+update();
+</script>
+</body>
+</html>

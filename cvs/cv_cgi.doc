@@ -1,0 +1,80 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="utf-8">
+<style>
+body { font-family: Calibri, sans-serif; font-size: 10.5pt; margin: 40px 50px; line-height: 1.3; }
+h1 { font-size: 16pt; margin: 0 0 2px 0; }
+h2 { font-size: 11pt; margin: 14px 0 4px 0; border-bottom: 1px solid #000; padding-bottom: 2px; }
+.contact { font-size: 9.5pt; margin: 0 0 6px 0; }
+.project-title { font-weight: bold; margin: 8px 0 2px 0; }
+ul { margin: 2px 0 4px 0; padding-left: 22px; }
+li { margin: 1px 0; }
+table.header { width: 100%; border: none; }
+table.header td { border: none; padding: 0; vertical-align: top; }
+</style>
+</head>
+<body>
+
+<h1>Gergő Honyák</h1>
+<p class="contact">honyakgergo7@gmail.com | linkedin | github</p>
+
+<h2>EDUCATION</h2>
+<table class="header" width="100%">
+<tr><td><b>Breda University of Applied Sciences</b></td><td align="right"><i>Second Year Student</i></td></tr>
+<tr><td>Bachelor of Applied Data Science and AI</td><td align="right">GPA 4.0</td></tr>
+</table>
+<br>
+<table class="header" width="100%">
+<tr><td><b>Eindhoven University of Technology (TU/e)</b></td><td align="right"><i>Starting Sep 2026</i></td></tr>
+<tr><td>Pre-Master in Data Science. Seeking graduation internship from Jan 2027</td><td></td></tr>
+</table>
+<p>Spoken Languages: English C1, German B2, Dutch (learning), Hungarian (native)</p>
+
+<h2>TECHNICAL SKILLS</h2>
+<ul>
+<li><b>Programming:</b> Python, JavaScript, SQL</li>
+<li><b>Data &amp; Cloud:</b> Docker, Docker Compose, PostgreSQL, Microsoft Azure, Google Cloud (Cloud Run, Firebase), CI/CD (GitHub Actions, GHCR)</li>
+<li><b>ML / Data:</b> PyTorch, Scikit-learn, pandas, NumPy, React, MLflow, Apache Airflow</li>
+<li><b>Tooling:</b> Azure DevOps, FastAPI, Streamlit, MinIO, Portainer</li>
+</ul>
+
+<h2>EXPERIENCE</h2>
+<table class="header" width="100%">
+<tr><td><b>Part-time AI Engineer Intern</b></td><td align="right"><i>June 2025 – Present</i></td></tr>
+</table>
+<ul>
+<li>Designed and deployed a Retrieval-Augmented Generation (RAG) pipeline integrating a custom LLaMA model with external APIs, handling data retrieval logic, embedding storage, and query routing</li>
+<li>Built a full-stack application (FastAPI + JavaScript) deployed on Google Cloud Run and Firebase, making infrastructure decisions for scalability and security</li>
+<li>Integrated proxy systems in collaboration with senior engineers, identifying architectural constraints and implementing solutions</li>
+<li>Presented technical demos and documented system design decisions for stakeholder review</li>
+</ul>
+
+<h2>RELEVANT PROJECTS</h2>
+
+<p class="project-title">Sentify: Emotion Classification Pipeline (Docker, FastAPI, Azure, PostgreSQL, MLflow)</p>
+<ul>
+<li>Built a full MLOps data pipeline as a university project: ingests YouTube videos, transcribes audio, translates to English, and classifies emotion per sentence into 7 classes using a fine-tuned BERT model (macro F1 improved from 0.41 to 0.84)</li>
+<li>Deployed the served application as a Docker Compose stack on Portainer: React/Vite frontend, FastAPI backend, Streamlit monitoring dashboard, PostgreSQL for predictions and user feedback, MinIO for artifact storage</li>
+<li>Implemented an automated retraining pipeline on Azure using Airflow: scheduled DAG pulls user feedback from PostgreSQL, fine-tunes the model, evaluates against the current champion, and promotes via MLflow model registry</li>
+<li>Set up CI/CD through GitHub Actions and GHCR for automated image builds and deployment</li>
+</ul>
+
+<p class="project-title">SwingLab &amp; Money Dashboard: Personal Data Tools (Python, SQL, React)</p>
+<ul>
+<li>Built a backtesting platform and a real-time market monitoring dashboard to support personal trading decisions</li>
+<li>Money Dashboard ingests intraday market data (S&amp;P 500, individual assets) via yfinance, stores it in a local data layer, and visualises volatility metrics to distinguish between market stress regimes and normal fluctuations</li>
+<li>Designed an SQL caching layer to optimise data retrieval and reduce pipeline runtime across the backtesting engine</li>
+</ul>
+
+<p class="project-title">NPEC: Netherlands Plant Eco-phenotyping Centre (Python, PyTorch)</p>
+<ul>
+<li>Built a U-Net segmentation model for root growth prediction and applied reinforcement learning (SAC/PPO) to optimise automated inoculation via an OT-2 robotic arm in simulation</li>
+</ul>
+
+<p class="project-title">Waste Classifier: Full-Stack Application (Flask, Django, GCP)</p>
+<ul>
+<li>Deployed an image classification app with MobileNet transfer learning (97.7% accuracy), REST API, user authentication, and containerised cloud deployment on Google Cloud Platform</li>
+</ul>
+
+</body>
+</html>

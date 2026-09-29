@@ -28,20 +28,20 @@ const PROJECTS = [
     viz: 'equity',
     capText: 'VIX exit 25 / re-entry 20',
     stats: [
-      { num: '37.3%', label: 'CAGR, VIX-exit' },
-      { num: '1.425', label: 'Sharpe' },
-      { num: '-20.4%', label: 'Max drawdown' },
+      { num: '34.7%', label: 'CAGR, backtest since 2016' },
+      { num: '1.27', label: 'Sharpe, backtest' },
+      { num: '1.59', label: 'Sharpe, live 2026' },
     ],
     status: 'Live, trading real capital',
     copy: [
       "SwingLab is the largest thing I've built, a full quantitative research and trading platform, not just a single strategy script. It's where every strategy I design gets built, backtested, stress-tested, and eventually deployed, and it's also the platform currently trading my own capital live through MOM_BROAD.",
       "It's a proper application: a FastAPI backend handles data ingestion, indicator computation, and backtest execution, and a React frontend is the analysis workspace on top of it, drawing moving averages, Bollinger Bands, RSI, and running any strategy against history with full trade logging and drawdown breakdowns. SQLite was a deliberate choice here, not a default: for a single-user research platform running local backtests, a full server database adds latency for no benefit, and SQLite gives fast reads and writes with zero setup cost.",
       "The strategy currently running inside it is MOM_BROAD, a weekly cross-sectional momentum strategy trading a combined S&P 500 + QQQ universe. Stocks are ranked by 189-day relative strength, filtered through a walk-forward Boruta permutation test that checks whether a ticker's signal actually beats random shuffles of itself, then gated by a bull-regime check and a 3-vote indicator system (EWMAC, MACD, Supertrend) requiring at least 2 of 3 to agree before entry. The top 7 survivors are held equal-weight, sector-capped at 3 per GICS sector, with a VIX regime overlay that steps the whole book to cash above VIX 25 and back in below VIX 20.",
-      "Backtested equal-weight without the overlay returns 43.8% CAGR at a 1.289 Sharpe with a -40.7% max drawdown. Adding the VIX regime exit brings that to 37.3% CAGR, 1.425 Sharpe, and -20.4% max drawdown, roughly halving the drawdown while improving risk-adjusted return, a trade worth making for something trading real money. A separate circuit-breaker layer, calibrated off the strategy's own Monte Carlo distribution rather than arbitrary numbers, halts trading on a genuine regime break rather than ordinary volatility.",
+      "Backtested daily from December 2016, the full system returns 34.7% CAGR at a 1.27 Sharpe with a -21.2% max drawdown. The VIX exit is what keeps that drawdown to roughly half of what plain equal-weight momentum suffers, a trade worth making for something trading real money. Live since February 2026 the account is up 51.8% at a 1.59 Sharpe, a short sample but a real one. A separate circuit-breaker layer, calibrated off the strategy's own Monte Carlo distribution rather than arbitrary numbers, halts trading on a genuine regime break rather than ordinary volatility.",
     ],
     exhibits: [
-      { img: 'equity-curve.png', caption: 'FIG. 01. MOM_BROAD equity curve and drawdown, with VIX out-of-market periods shaded.' },
-      { img: 'platform-ui.png', src: 'swinglab/images/platform_ui.png', placeholder: true,   /* TODO: add the file, then drop this flag */ caption: 'FIG. 02. SwingLab live: ticker explorer, macro gates, and the live signal feed.' },
+      { img: 'equity-curve.png', caption: 'FIG. 01. MOM_BROAD daily equity and drawdown, with out-of-market periods and the live stretch shaded.' },
+      { img: 'platform-ui.png', caption: 'FIG. 02. SwingLab live: ticker explorer, macro gates, and the live signal feed.' },
     ],
   },
 
@@ -69,7 +69,7 @@ const PROJECTS = [
     copy: [
       "A thesis-grade project asking one specific, falsifiable question: does modeling how stocks move together as a graph add real predictive value over a simple 200-day moving average trend baseline? Tested on the Nasdaq-100, 2005 to 2025, with 83 quarters of walk-forward validation so there's no lookahead and no single lucky backtest window doing the work.",
       "Each stock is a node. Edges are built from rolling pairwise return correlations, recomputed every quarter as relationships shift. Node features combine multi-lookback momentum, volatility, and fractionally differentiated price series, which keep enough memory of price level to be informative while staying close to stationary. A graph neural network passes information between connected nodes, so a stock's predicted return is shaped by what's happening in the names it's structurally linked to, that's the actual hypothesis under test.",
-      "Annualized return came out to 27.3% against the baseline's 25.6%, Sharpe 1.33 versus 1.23, and max drawdown -27.6% versus -36.4%, a meaningfully smaller drawdown for a similar return profile. The Information Coefficient of 0.051 (p = 0.007) confirms the cross-sectional predictive signal is real, not a fluke of one run, and a Fama-French 5-factor plus Momentum regression (t-stat 3.77, p = 0.0002) confirms the outperformance isn't just repackaged exposure to known risk factors.",
+      "Annualized return came out to 27.3% against the baseline's 25.6%, Sharpe 1.33 versus 1.23, and max drawdown -27.6% versus -36.4%, a meaningfully smaller drawdown for a similar return profile. The Information Coefficient of 0.051 (p = 0.007) confirms the cross-sectional predictive signal is real, not a fluke of one run. Against QQQ itself it earns a 9.48% annualized alpha (t = 2.80, p = 0.005), though that benchmark carries survivorship bias, which is why the same-universe 200-MA test is the fair one.",
     ],
     exhibits: [
       { img: 'fair-comparison.png', caption: 'FIG. 01. Cumulative returns, GNN vs. 200-MA baseline, same universe, no survivorship bias.' },
@@ -77,10 +77,41 @@ const PROJECTS = [
     ],
   },
 
-  /* ── 3. Sentify ───────────────────────────────────────────── */
+  /* ── 3. proper_validation ─────────────────────────────────── */
+  {
+    id: 'proper-validation',
+    n: '03',
+    year: '2026',
+    cat: 'quant',
+    title: 'proper_validation',
+    em: 'backtest validator',
+    role: 'Solo \u2219 Open source',
+    type: 'Quant research tooling',
+    tags: ['Python', 'SciPy', 'statsmodels', 'pytest'],
+    blurb: 'An adversarial validator that attacks a finished backtest and reports how much of the claimed edge survives.',
+    featured: false,
+    stats: [
+      { num: '96%', label: 'Planted defects caught' },
+      { num: '0%', label: 'False positives on a real edge' },
+      { num: '1,075', label: 'Tests, 97% coverage' },
+    ],
+    status: 'Complete, open source',
+    copy: [
+      "Backtest engines are mature and free, and none of them tell you whether the result means anything. proper_validation asks that question. It takes a backtest you have already run, assumes the arithmetic is right and attacks everything else, then reports how much of the claimed edge survives. It can falsify a strategy but never validate one: there is deliberately no PASSED verdict, the best available is NOT_FALSIFIED.",
+      "It gives two separate verdicts. The statistical one asks whether the edge is distinguishable from luck: a deflated Sharpe against a simulated best-of-N null, the probability of backtest overfitting, Fama-French 5 plus momentum attribution, cost fragility from measured turnover, and survivorship counted against real index membership. The engine one asks whether the backtest can be trusted as code. Its look-ahead test destroys every price after a cut point, re-runs the strategy and checks that no earlier decision changed, which catches leaks inside library calls that no linter can reach.",
+      "A careful dual momentum strategy shows why the verdicts are kept apart. It beats the S&P 500 on Sharpe and halves its worst drawdown, and the engine finds nothing wrong. The statistics still mark it materially weakened: the alpha is momentum exposure you could buy directly, PBO is 59.1%, and a claimed Sharpe of 0.67 falls to 0.31 once cash, autocorrelation, costs and multiple testing are counted.",
+      "Detection rates are measured, not asserted. Across nine labelled benchmark strategies with known edges it catches 96% of the planted defects, with 0% false positives on the one real edge. It ships as a CLI and a Claude Code skill.",
+    ],
+    exhibits: [
+      { img: 'haircut_cascade.png', caption: 'FIG. 01. A claimed Sharpe of 0.67, after each honest adjustment.' },
+      { img: 'pbo_panel.png', caption: 'FIG. 02. Probability of backtest overfitting across 12,870 splits.' },
+    ],
+  },
+
+  /* ── 4. Sentify ───────────────────────────────────────────── */
   {
     id: 'sentify',
-    n: '03',
+    n: '04',
     year: '2025',
     cat: 'infra',
     title: 'Sentify',
@@ -109,10 +140,10 @@ const PROJECTS = [
     ],
   },
 
-  /* ── 4. volatility_dashboard ──────────────────────────────── */
+  /* ── 5. volatility_dashboard ──────────────────────────────── */
   {
     id: 'volatility-dashboard',
-    n: '04',
+    n: '05',
     year: '2026',
     cat: 'infra',
     title: 'volatility_dashboard',
@@ -144,10 +175,10 @@ const PROJECTS = [
     ],
   },
 
-  /* ── 5. VTSZ / Tarif classifier ───────────────────────────── */
+  /* ── 6. VTSZ / Tarif classifier ───────────────────────────── */
   {
     id: 'vtsz',
-    n: '05',
+    n: '06',
     year: '2025',
     cat: 'research',
     title: 'VTSZ customs',
@@ -171,10 +202,10 @@ const PROJECTS = [
     exhibits: [],
   },
 
-  /* ── 6. IMC Prosperity 4 ──────────────────────────────────── */
+  /* ── 7. IMC Prosperity 4 ──────────────────────────────────── */
   {
     id: 'prosperity',
-    n: '06',
+    n: '07',
     year: '2026',
     cat: 'quant',
     title: 'IMC Prosperity 4',
@@ -202,10 +233,10 @@ const PROJECTS = [
     ],
   },
 
-  /* ── 7. NPEC ───────────────────────────────────────────────── */
+  /* ── 8. NPEC ───────────────────────────────────────────────── */
   {
     id: 'npec',
-    n: '07',
+    n: '08',
     year: '2025',
     cat: 'research',
     title: 'NPEC',
@@ -234,10 +265,10 @@ const PROJECTS = [
     ],
   },
 
-  /* ── 8. Waste Classifier (archive only) ───────────────────── */
+  /* ── 9. Waste Classifier (archive only) ───────────────────── */
   {
     id: 'waste-classifier',
-    n: '08',
+    n: '09',
     year: '2024',
     cat: 'ml',
     title: 'Waste Classifier',
@@ -263,37 +294,40 @@ const PROJECTS = [
     ],
   },
 
-  /* ── 9. DeckDoctor ────────────────────────────────────────── */
+  /* ── 10. Clash Analyzer ──────────────────────────────────── */
   {
-    id: 'deckdoctor',
-    n: '09',
-    year: '2025',
+    id: 'clash',
+    n: '10',
+    year: '2026',
     cat: 'side',
-    title: 'DeckDoctor',
-    em: 'hackathon build',
-    role: 'Solo ∙ Hackathon',
-    type: 'Applied ML ∙ Side',
-    tags: ['React', 'FastAPI', 'GPT', 'ElevenLabs'],
-    blurb: 'A Clash Royale deck analyzer built at Supercell\u2019s hackathon, with a spoken analysis.',
+    title: 'Clash Analyzer',
+    em: 'battle analytics',
+    role: 'Solo \u2219 Side',
+    type: 'Analytics dashboard',
+    tags: ['FastAPI', 'React', 'TypeScript', 'SQLite'],
+    blurb: 'A Clash Royale progress tracker and battle-analytics dashboard, with a Wilson interval on every rate.',
     featured: false,
     stats: [
-      { num: 'Hackathon', label: 'Supercell' },
-      { num: 'GPT', label: 'Deck analysis' },
-      { num: 'Voice', label: 'ElevenLabs TTS' },
+      { num: '95%', label: 'Wilson interval on every rate' },
+      { num: 'Top 100', label: 'Meta, crawled daily' },
+      { num: '112', label: 'Backend tests, 95% coverage' },
     ],
     status: 'Complete',
     copy: [
-      "Built during Supercell's Clash Royale hackathon: a tool that pulls a player's deck through the Clash Royale API, analyzes its strengths and weaknesses using GPT-based reasoning, and reads the analysis back out loud through ElevenLabs text-to-speech.",
+      "A Clash Royale progress tracker, upgrade planner and battle-analytics dashboard, built on the official API. The API has no memory: the battlelog keeps only the last 30 or so games and a profile only shows its current state. So a background poller stores every battle and a profile snapshot in SQLite, and history builds up over time.",
+      "From that history it computes what the game never shows you. Tilt: win rate after a win, after a loss, after two losses in a row. Session fatigue by game number, levels against skill, elixir leaked, nemesis and prey cards, and the best hour to play, all summed up as plain-English insights. The upgrade planner works out the gold and copies needed to take a deck to level 13\u201316, from a cost table kept by hand and checked against the published totals in tests.",
+      "A daily crawl of the top 100 Path of Legends players gives card usage, win rates and top decks, and a vs Meta tab shows how each of your cards performs at the top. It gets the same statistical care as my quant work: every rate carries a 95% Wilson interval, and an insight only appears once the sample can support it. FastAPI and SQLite behind a strict TypeScript React 19 frontend, tested against recorded real API responses.",
     ],
     exhibits: [
-      { placeholder: true, caption: 'FIG. 01. DeckDoctor analysis output. Image pending.' },
+      { img: 'overview.png', caption: 'FIG. 01. Player overview: profile, current deck, insights and ranked history.' },
+      { img: 'battles.png', caption: 'FIG. 02. Battle analytics: tilt, fatigue, levels against skill, nemesis cards.' },
     ],
   },
 
-  /* ── 10. OCR & LLM receipt extraction ─────────────────────── */
+  /* ── 11. OCR & LLM receipt extraction ─────────────────────── */
   {
     id: 'ocr-receipts',
-    n: '10',
+    n: '11',
     year: '2025',
     cat: 'ml',
     title: 'Receipt extraction',
@@ -318,10 +352,10 @@ const PROJECTS = [
     ],
   },
 
-  /* ── 11. AI Engineer Internship ───────────────────────────── */
+  /* ── 12. AI Engineer Internship ───────────────────────────── */
   {
     id: 'internship',
-    n: '11',
+    n: '12',
     year: '2025',
     cat: 'infra',
     title: 'AI Engineer',
@@ -352,8 +386,9 @@ const PROJECTS = [
    than as a field on each project, because the folder names came first and
    only some of them match the ids used on this site: the dashboard's folder is
    still `money-dashboard`, and `GNN project` has a space in it, which has to
-   arrive percent-encoded or GitHub 404s. Projects with no folder simply get no
-   link, `repo` stays undefined and the template skips it. */
+   arrive percent-encoded or GitHub 404s. Every project on the site now has a
+   folder; one added later without a folder simply gets no link, `repo` stays
+   undefined and the template skips it. */
 const REPO_BASE = 'https://github.com/honyakgergo/Portfolio/tree/main/';
 const REPO_FOLDER = {
   'swinglab':              'swinglab',
@@ -362,8 +397,24 @@ const REPO_FOLDER = {
   'volatility-dashboard':  'money-dashboard',
   'npec':                  'npec-root-analysis',
   'waste-classifier':      'waste-warrior',
+  'proper-validation':     'proper-validation',
+  'clash':                 'clash-analyzer',
+  'vtsz':                  'vtsz-customs-classifier',
+  'prosperity':            'imc-prosperity-4',
+  'ocr-receipts':          'receipt-extraction',
+  'internship':            'ai-engineer-internship',
 };
 PROJECTS.forEach(p => { if (REPO_FOLDER[p.id]) p.repo = REPO_BASE + REPO_FOLDER[p.id]; });
+
+/* ── Card covers ──────────────────────────────────────────────
+   The home deck and the archive show each project as a picture of the work
+   rather than a colour field. Every cover is a 3:2 crop at
+   assets/images/<id>/cover.webp, cut from that project's screenshots in the
+   GitHub portfolio repo; white-background charts are flipped to dark so they
+   sit in the page. Projects with nothing to show keep the colour field. */
+const HAS_COVER = ['swinglab', 'gnn', 'proper-validation', 'sentify', 'volatility-dashboard',
+  'prosperity', 'npec', 'waste-classifier', 'clash', 'ocr-receipts'];
+PROJECTS.forEach(p => { if (HAS_COVER.includes(p.id)) p.cover = `/assets/images/${p.id}/cover.webp`; });
 
 /* Convenience lookups used across pages */
 const PROJECTS_BY_ID = Object.fromEntries(PROJECTS.map(p => [p.id, p]));

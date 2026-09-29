@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Archive · Gergő Honyák</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="view-transition" content="same-origin" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400;1,14..32,500;1,14..32,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="assets/css/site.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/Flip.min.js"></script>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-back">
+    <svg viewBox="0 0 22 8" fill="none"><path d="M0 4H21M21 4L17 1M21 4L17 7" stroke="currentColor" stroke-width="1.2"/></svg>
+    Index
+  </a>
+  <span class="brand">Gergő Honyák</span>
+  <span class="eyebrow">Archive</span>
+</nav>
+
+<div class="masthead">
+  <div class="lead">
+    <div class="num">Project archive</div>
+    <h1>
+      <span class="line" data-rv-line><span>Everything,</span></span>
+      <span class="line" data-rv-line><span><em>catalogued.</em></span></span>
+    </h1>
+  </div>
+  <div class="meta">
+    Eleven projects across quant trading, applied ML, and the platforms that keep the rest honest. One of them is trading real capital right now.
+    <div class="stat-row">
+      <div><span class="n">11</span>Projects</div>
+      <div><span class="n">3+</span>Years active</div>
+      <div><span class="n">1</span>Live strategy</div>
+    </div>
+  </div>
+</div>
+
+<div class="filter-bar-wrap">
+  <div class="filter-bar">
+    <div class="filter-chips">
+      <button class="f-chip active" data-filter="all">All</button>
+      <button class="f-chip" data-filter="ml">Machine Learning</button>
+      <button class="f-chip" data-filter="quant">Quant</button>
+      <button class="f-chip" data-filter="infra">Infra · Platform</button>
+      <button class="f-chip" data-filter="research">Research</button>
+      <button class="f-chip" data-filter="side">Side</button>
+    </div>
+    <div class="filter-count"><b id="shownCount">11</b> shown</div>
+  </div>
+</div>
+
+<main class="grid-wrap">
+  <div class="grid" id="grid"><!-- injected --></div>
+  <div class="empty" id="empty">Nothing catalogued here yet.</div>
+</main>
+
+<footer class="foot">
+  <span>© 2026 Gergő Honyák</span>
+  <span>Set in Inter &amp; JetBrains Mono</span>
+</footer>
+
+<script src="assets/js/projects-data.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger, Flip);
+
+const grid = document.getElementById('grid');
+PROJECTS.forEach((p) => {
+  const card = document.createElement('a');
+  card.href = `project.html?id=${p.id}`;
+  card.className = 'a-card';
+  card.dataset.cat = p.cat;
+  card.style.viewTransitionName = `ghost-${p.id}`;
+  card.innerHTML = `
+    <span class="a-ghost">${p.n}</span>
+    <div class="a-top">
+      <span class="a-cat"><span class="dot"></span>${CAT_LABEL[p.cat]}</span>
+      <span class="a-year">${p.year}</span>
+    </div>
+    <div class="a-title" style="view-transition-name: title-${p.id};">${p.title} <em>${p.em}</em></div>
+    <div class="a-role">${p.role}</div>
+    <div class="a-type">${p.type}</div>
+    <div class="a-foot">
+      <div class="a-tags">${p.tags.map(t => `<span>${t}</span>`).join('')}</div>
+      <span class="a-arrow">↗</span>
+    </div>
+  `;
+  grid.appendChild(card);
+});
+
+const cards = Array.from(grid.querySelectorAll('.a-card'));
+const emptyEl = document.getElementById('empty');
+const shownCount = document.getElementById('shownCount');
+
+const chips = Array.from(document.querySelectorAll('.f-chip'));
+chips.forEach(c => {
+  const f = c.dataset.filter;
+  const cnt = f === 'all' ? PROJECTS.length : PROJECTS.filter(p => p.cat === f).length;
+  const s = document.createElement('span');
+  s.className = 'cnt';
+  s.textContent = cnt;
+  c.appendChild(s);
+});
+
+let current = 'all';
+function applyFilter(f) {
+  if (f === current) return;
+  current = f;
+  const state = Flip.getState(cards, { props: 'opacity' });
+  let shown = 0;
+  cards.forEach(card => {
+    const match = (f === 'all') || card.dataset.cat === f;
+    card.style.display = match ? '' : 'none';
+    if (match) shown++;
+  });
+  shownCount.textContent = shown;
+  emptyEl.style.display = shown === 0 ? 'block' : 'none';
+  Flip.from(state, {
+    duration: 0.62, ease: 'power3.inOut', scale: true, absolute: true, stagger: 0.028,
+    onEnter: els => gsap.fromTo(els, { opacity: 0, scale: 0.86, y: 18 }, { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.03 }),
+    onLeave: els => gsap.to(els, { opacity: 0, scale: 0.86, duration: 0.35, ease: 'power2.in' }),
+  });
+}
+chips.forEach(c => {
+  c.addEventListener('click', () => {
+    chips.forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    applyFilter(c.dataset.filter);
+  });
+});
+
+gsap.from('.nav > *', { y: -20, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.08 });
+gsap.utils.toArray('[data-rv-line]').forEach(el => gsap.from(el, { yPercent: 105, duration: 1.4, ease: 'expo.out' }));
+gsap.set(cards, { opacity: 0, y: 34 });
+ScrollTrigger.batch(cards, {
+  start: 'top 92%',
+  onEnter: batch => gsap.to(batch, { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out', stagger: 0.06, overwrite: true }),
+});
+window.addEventListener('load', () => ScrollTrigger.refresh());
+</script>
+</body>
+</html>
