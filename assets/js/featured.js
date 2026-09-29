@@ -20,7 +20,7 @@
   };
   /* short, punchy readout line per project */
   const TAG = {
-    'swinglab': 'A quantitative research & trading platform, now running live on real capital',
+    'swinglab': 'A weekly momentum strategy on US large caps, trading real capital since February',
     'gnn': 'Graph neural nets for cross-sectional equity return prediction',
     'sentify': 'A media emotion classifier wrapped in a full auto-retraining MLOps stack',
     'volatility-dashboard': 'The screen I read every day: breadth, rotation, the vol complex and weekly positioning',
@@ -29,8 +29,8 @@
   };
   /* a few enticing keywords per card (mirrors the archive) */
   const KEYS = {
-    'swinglab': ['Live capital', 'Momentum', 'Backtester'],
-    'gnn': ['Graph neural net', 'Alpha', 'Walk-forward'],
+    'swinglab': ['Live capital', 'Momentum', 'Walk-forward'],
+    'gnn': ['Graph neural net', 'IC', 'Walk-forward'],
     'sentify': ['Emotion AI', 'Auto-retrain', 'On-prem'],
     'volatility-dashboard': ['Vol complex', 'RRG rotation', 'Weekly positioning'],
     'prosperity': ['Options', 'IV smile', 'Game theory'],
